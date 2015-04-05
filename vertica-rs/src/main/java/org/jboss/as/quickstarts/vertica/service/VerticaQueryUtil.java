@@ -117,7 +117,7 @@ public class VerticaQueryUtil {
 			con = VerticaQueryUtil.getConnection();
 			System.out.println("Sql > " + query);
 			PreparedStatement ps = con.prepareStatement(query);
-			for (int i = 0; i < params.length; i++) {
+			for (int i = 0; params!=null && i < params.length; i++) {
 
 				if (paramsType[i].equals(Integer.class)) {
 					ps.setInt(i + 1, Integer.parseInt(params[i]));
