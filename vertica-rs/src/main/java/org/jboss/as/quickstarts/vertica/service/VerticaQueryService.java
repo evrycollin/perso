@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -11,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,7 +26,7 @@ import java.util.Properties;
 import com.vertica.jdbc.DataSource;
 
 public class VerticaQueryService {
-
+	static final private String DEFAULT_DELIMITER = ";";
 	static final private DataSource ds;
 	static final private String queryRepository;
 	static final private Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
@@ -116,6 +120,25 @@ public class VerticaQueryService {
 	public static Collection<Object> query(String queryId, String[] params)
 			throws ClassNotFoundException, IOException {
 		return query(getQuerySQL(queryId), params, getQueryParamTypes(queryId));
+	}
+
+	public static boolean script(String scriptId)
+			throws ClassNotFoundException, IOException {
+
+		Connection con = null;
+		try {
+			con = VerticaQueryService.getConnection();
+			runScript(con, new StringReader(getQuerySQL(scriptId)));
+			return true;
+		} catch (Throwable th) {
+			throw new RuntimeException(th);
+		} finally {
+			if (con != null)
+				try {
+					con.close();
+				} catch (Throwable ttt) {
+				}
+		}
 	}
 
 	private static void dumpResultSet(ResultSet rs, List<Object> res)
@@ -219,4 +242,110 @@ public class VerticaQueryService {
 		});
 
 	}
+
+	private static void runScript(Connection conn, Reader reader)
+			throws IOException, SQLException {
+		StringBuffer command = null;
+		boolean fullLineDelimiter = false;
+		boolean stopOnError = true;
+
+		try {
+			LineNumberReader lineReader = new LineNumberReader(reader);
+			String line = null;
+			while ((line = lineReader.readLine()) != null) {
+				if (command == null) {
+					command = new StringBuffer();
+				}
+				String trimmedLine = line.trim();
+				if (trimmedLine.startsWith("--")) {
+					println(trimmedLine);
+				} else if (trimmedLine.length() < 1
+						|| trimmedLine.startsWith("//")) {
+					// Do nothing
+				} else if (trimmedLine.length() < 1
+						|| trimmedLine.startsWith("--")) {
+					// Do nothing
+				} else if (!fullLineDelimiter
+						&& trimmedLine.endsWith(DEFAULT_DELIMITER)
+						|| fullLineDelimiter
+						&& trimmedLine.equals(DEFAULT_DELIMITER)) {
+					command.append(line.substring(0,
+							line.lastIndexOf(DEFAULT_DELIMITER)));
+					command.append(" ");
+					Statement statement = conn.createStatement();
+
+					println(command);
+
+					boolean hasResults = false;
+					if (stopOnError) {
+						hasResults = statement.execute(command.toString());
+					} else {
+						try {
+							statement.execute(command.toString());
+						} catch (SQLException e) {
+							e.fillInStackTrace();
+							printlnError("Error executing: " + command);
+							printlnError(e);
+						}
+					}
+
+					ResultSet rs = statement.getResultSet();
+					if (hasResults && rs != null) {
+						ResultSetMetaData md = rs.getMetaData();
+						int cols = md.getColumnCount();
+						for (int i = 0; i < cols; i++) {
+							String name = md.getColumnLabel(i);
+							print(name + "\t");
+						}
+						println("");
+						while (rs.next()) {
+							for (int i = 0; i < cols; i++) {
+								String value = rs.getString(i);
+								print(value + "\t");
+							}
+							println("");
+						}
+					}
+
+					command = null;
+					try {
+						statement.close();
+					} catch (Exception e) {
+					}
+				} else {
+					command.append(line);
+					command.append(" ");
+				}
+			}
+
+		} catch (SQLException e) {
+			e.fillInStackTrace();
+			printlnError("Error executing: " + command);
+			printlnError(e);
+			throw e;
+		} catch (IOException e) {
+			e.fillInStackTrace();
+			printlnError("Error executing: " + command);
+			printlnError(e);
+			throw e;
+		} finally {
+			try {
+				conn.rollback();
+			} catch (Throwable ignore) {
+			}
+		}
+	}
+
+	private static void print(Object o) {
+		System.out.print(o);
+	}
+
+	private static void println(Object o) {
+		System.out.println(o);
+	}
+
+	private static void printlnError(Object o) {
+		System.err.println(o);
+	}
+
 }

@@ -69,6 +69,17 @@ public class VerticaResource {
 		}
 	}	
 
+	@GET
+	@Path("script/{script}")
+	@Produces({ "application/json" })
+	public Object scriptRepo(@PathParam("script") String script) {
+		try {
+			return VerticaQueryService.script(script);
+		} catch (Throwable th) {
+			return error("error", th);
+		}
+	}
+	
 	private static Object error(String message, Throwable th) {
 		logger.severe(message);
 		Map<String, String> res = new LinkedHashMap<String, String>();
