@@ -27,7 +27,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,9 +40,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
@@ -72,7 +68,8 @@ public class VerticaResource {
 	public Object query1p(@Context UriInfo ui,
 			@PathParam("queryId") String queryId) {
 		try {
-			return query(getQuerySQL(queryId), new String[] {}, getQueryParamTypes(queryId));
+			return query(getQuerySQL(queryId), new String[] {},
+					getQueryParamTypes(queryId));
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -86,7 +83,8 @@ public class VerticaResource {
 			@PathParam("queryId") String queryId,
 			@PathParam("param1") String param1) {
 		try {
-			return query(getQuerySQL(queryId), new String[] { param1 }, getQueryParamTypes(queryId));
+			return query(getQuerySQL(queryId), new String[] { param1 },
+					getQueryParamTypes(queryId));
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -101,7 +99,8 @@ public class VerticaResource {
 			@PathParam("param1") String param1,
 			@PathParam("param2") String param2) {
 		try {
-			return query(getQuerySQL(queryId), new String[] { param1, param2 }, getQueryParamTypes(queryId));
+			return query(getQuerySQL(queryId), new String[] { param1, param2 },
+					getQueryParamTypes(queryId));
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -125,7 +124,6 @@ public class VerticaResource {
 
 	}
 
-
 	private void dumpResultSet(ResultSet rs, List res) throws Exception {
 		ResultSetMetaData meta = rs.getMetaData();
 		List<String> colNames = new ArrayList<String>();
@@ -147,7 +145,6 @@ public class VerticaResource {
 	}
 
 	private String getQuerySQL(String queryId) {
-		getDataSource();
 		String fileName = queryRepository + "/" + queryId + ".sql";
 		InputStream in = getClass().getClassLoader().getResourceAsStream(
 				fileName);
@@ -167,28 +164,31 @@ public class VerticaResource {
 		}
 		return buf.getBuffer().toString();
 	}
-	private Class[] getQueryParamTypes(String queryId) throws ClassNotFoundException, IOException {
-		getDataSource();
+
+	private Class[] getQueryParamTypes(String queryId)
+			throws ClassNotFoundException, IOException {
 		List<Class> res = new ArrayList<Class>();
 		String fileName = queryRepository + "/" + queryId + ".sql.params";
 		InputStream in = getClass().getClassLoader().getResourceAsStream(
 				fileName);
 		if (in != null) {
-		
-			BufferedReader reader = new BufferedReader( new InputStreamReader(in));
-			String s=null;
-			while((s=reader.readLine())!=null) {
-				res.add( Class.forName(s));
+
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(in));
+			String s = null;
+			while ((s = reader.readLine()) != null) {
+				res.add(Class.forName(s));
 			}
-			
+
 		}
 		return res.toArray(new Class[res.size()]);
 	}
+
 	private Object query(String query, String[] params, Class[] paramsType) {
 		Connection con = null;
 		List res = new ArrayList();
 		try {
-			con = getDataSource().getConnection();
+			con = ds.getConnection();
 			System.out.println("Sql > " + query);
 			PreparedStatement ps = con.prepareStatement(query);
 			for (int i = 0; i < params.length; i++) {
@@ -204,7 +204,8 @@ public class VerticaResource {
 				} else if (paramsType[i].equals(String.class)) {
 					ps.setString(i + 1, params[i]);
 				} else {
-					throw new RuntimeException("Type not supported : "+paramsType[i].getName());
+					throw new RuntimeException("Type not supported : "
+							+ paramsType[i].getName());
 				}
 			}
 			dumpResultSet(ps.executeQuery(), res);
@@ -236,33 +237,28 @@ public class VerticaResource {
 		return res;
 	}
 
-	private DataSource getDataSource() {
-		if (ds == null) {
-			ds = new DataSource();
-			InputStream configIn = getClass().getClassLoader()
-					.getResourceAsStream("vertica.config");
-			if (configIn == null) {
-				throw new RuntimeException(
-						"cannot find vertica.config in classpath");
-			}
-			Properties prop = new Properties();
-			try {
-				prop.load(configIn);
-			} catch (Throwable th) {
-				throw new RuntimeException(
-						"cannot load properties from config", th);
-			}
-			ds.setURL(prop.getProperty("vertica.url"));
-			ds.setUserID(prop.getProperty("vertica.user"));
-			ds.setPassword(prop.getProperty("vertica.password"));
-			queryRepository = prop.getProperty("queries-repository",
-					"vertica-queries");
-
+	static final DataSource ds;
+	static String queryRepository;
+	static {
+		ds = new DataSource();
+		InputStream configIn = VerticaResource.class.getClassLoader()
+				.getResourceAsStream("vertica.config");
+		if (configIn == null) {
+			throw new RuntimeException(
+					"cannot find vertica.config in classpath");
 		}
-		return ds;
-	}
+		Properties prop = new Properties();
+		try {
+			prop.load(configIn);
+		} catch (Throwable th) {
+			throw new RuntimeException("cannot load properties from config", th);
+		}
+		ds.setURL(prop.getProperty("vertica.url"));
+		ds.setUserID(prop.getProperty("vertica.user"));
+		ds.setPassword(prop.getProperty("vertica.password"));
+		queryRepository = prop.getProperty("queries-repository",
+				"vertica-queries");
 
-	DataSource ds = null;
-	String queryRepository = null;
+	}
 
 }
