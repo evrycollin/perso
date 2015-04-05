@@ -1,4 +1,4 @@
-package org.jboss.as.quickstarts.vertica.service.repo;
+package org.jboss.as.quickstarts.vertica.service.query;
 
 import org.jboss.as.quickstarts.vertica.service.AbstractVerticaQueryServiceTest;
 import org.junit.Test;
