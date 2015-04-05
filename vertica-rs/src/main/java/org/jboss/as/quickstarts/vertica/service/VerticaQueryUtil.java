@@ -24,7 +24,7 @@ import com.vertica.jdbc.DataSource;
 public class VerticaQueryUtil {
 	static final Logger logger = Logger.getLogger(VerticaQueryUtil.class.getName());
 	static final DataSource ds;
-	static String queryRepository;
+	static final String queryRepository;
 	static {
 		ds = new DataSource();
 		InputStream configIn = VerticaResource.class.getClassLoader()
