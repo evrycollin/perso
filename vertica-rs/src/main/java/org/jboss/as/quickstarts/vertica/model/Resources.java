@@ -18,12 +18,11 @@ package org.jboss.as.quickstarts.vertica.model;
 
 import java.util.logging.Logger;
 
-import javax.enterprise.context.RequestScoped;
+import javax.ejb.Stateless;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-
-@RequestScoped
+@Stateless
 public class Resources {
 
 
