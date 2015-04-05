@@ -25,10 +25,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 @Stateless
 public class Resources {
 
-
-    @Produces
-    public Logger getLogger(InjectionPoint ip) {
-        String category = ip.getMember().getDeclaringClass().getName();
-        return Logger.getLogger(category);
-    }
+	@Produces
+	public Logger getLogger(InjectionPoint ip) {
+		String category = ip.getMember().getDeclaringClass().getName();
+		return Logger.getLogger(category);
+	}
 }

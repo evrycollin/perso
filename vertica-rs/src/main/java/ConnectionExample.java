@@ -74,7 +74,7 @@ public class ConnectionExample {
 								+ " " + rs.getString(3).trim());
 			}
 			// Cleanup
-			//stmt.execute("DROP TABLE customers CASCADE");
+			// stmt.execute("DROP TABLE customers CASCADE");
 			conn.close();
 
 		} catch (SQLException e) {

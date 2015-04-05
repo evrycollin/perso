@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -13,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 
 import com.vertica.jdbc.DataSource;
 
-public class VerticaQueryUtil {
-	static final Logger logger = Logger.getLogger(VerticaQueryUtil.class
+public class VerticaQueryService {
+	static final Logger logger = Logger.getLogger(VerticaQueryService.class
 			.getName());
 	static final DataSource ds;
 	static final String queryRepository;
@@ -59,8 +59,9 @@ public class VerticaQueryUtil {
 			return cacheQuery.get(queryId);
 		}
 
-		String fileName = queryRepository + "/" + queryId + ".sql";
-		InputStream in = VerticaQueryUtil.class.getClassLoader()
+		String fileName = queryRepository + "/"
+				+ queryId.replaceAll("\\.", "/") + ".sql";
+		InputStream in = VerticaQueryService.class.getClassLoader()
 				.getResourceAsStream(fileName);
 		if (in == null)
 			throw new RuntimeException(fileName + " not found");
@@ -81,16 +82,17 @@ public class VerticaQueryUtil {
 		return sqlquery;
 	}
 
-	public synchronized static Class[] getQueryParamTypes(String queryId)
+	public synchronized static Class<?>[] getQueryParamTypes(String queryId)
 			throws ClassNotFoundException, IOException {
 
 		if (cacheQueryParamType.containsKey(queryId)) {
 			return cacheQueryParamType.get(queryId);
 		}
 
-		List<Class> res = new ArrayList<Class>();
-		String fileName = queryRepository + "/" + queryId + ".sql.params";
-		InputStream in = VerticaQueryUtil.class.getClassLoader()
+		List<Class<?>> res = new ArrayList<Class<?>>();
+		String fileName = queryRepository + "/"
+				+ queryId.replaceAll("\\.", "/") + ".sql.params";
+		InputStream in = VerticaQueryService.class.getClassLoader()
 				.getResourceAsStream(fileName);
 		if (in != null) {
 
@@ -102,27 +104,28 @@ public class VerticaQueryUtil {
 			}
 
 		}
-		Class[] toReturn = res.toArray(new Class[res.size()]);
+		Class<?>[] toReturn = res.toArray(new Class<?>[res.size()]);
 		cacheQueryParamType.put(queryId, toReturn);
 		return toReturn;
 	}
 
-	static final Map<String, Class[]> cacheQueryParamType = new HashMap<String, Class[]>();
+	static final Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
 	static final Map<String, String> cacheQuery = new HashMap<String, String>();
 
-	public static Object query(String queryId, String[] params) throws ClassNotFoundException, IOException {
-		return query( getQuerySQL(queryId), params, getQueryParamTypes(queryId) );
+	public static Collection<Object> query(String queryId, String[] params)
+			throws ClassNotFoundException, IOException {
+		return query(getQuerySQL(queryId), params, getQueryParamTypes(queryId));
 	}
 
-	
-	public static Object query(String query, String[] params, Class[] paramsType) {
+	public static Collection<Object> query(String query, String[] params,
+			Class<?>[] paramsType) {
 		Connection con = null;
-		List res = new ArrayList();
+		List<Object> res = new ArrayList<Object>();
 		try {
-			con = VerticaQueryUtil.getConnection();
+			con = VerticaQueryService.getConnection();
 			System.out.println("Sql > " + query);
 			PreparedStatement ps = con.prepareStatement(query);
-			for (int i = 0; params!=null && i < params.length; i++) {
+			for (int i = 0; params != null && i < params.length; i++) {
 
 				if (paramsType[i].equals(Integer.class)) {
 					ps.setInt(i + 1, Integer.parseInt(params[i]));
@@ -142,7 +145,7 @@ public class VerticaQueryUtil {
 			dumpResultSet(ps.executeQuery(), res);
 			ps.close();
 		} catch (Throwable th) {
-			return new RuntimeException(th);
+			throw new RuntimeException(th);
 
 		} finally {
 			if (con != null)
@@ -155,7 +158,8 @@ public class VerticaQueryUtil {
 
 	}
 
-	private static void dumpResultSet(ResultSet rs, List res) throws Exception {
+	private static void dumpResultSet(ResultSet rs, List<Object> res)
+			throws Exception {
 		ResultSetMetaData meta = rs.getMetaData();
 		List<String> colNames = new ArrayList<String>();
 		for (int i = 1; i < meta.getColumnCount(); i++) {
@@ -174,7 +178,5 @@ public class VerticaQueryUtil {
 			res.add(row);
 		}
 	}
-
-	
 
 }

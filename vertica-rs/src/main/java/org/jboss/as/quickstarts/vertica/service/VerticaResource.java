@@ -46,7 +46,7 @@ public class VerticaResource {
 	public Object query(@Context SecurityContext context,
 			@QueryParam("query") String query) {
 		try {
-			return VerticaQueryUtil.query(query, null, null);
+			return VerticaQueryService.query(query, null, null);
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -58,7 +58,7 @@ public class VerticaResource {
 	public Object query1p(@Context UriInfo ui,
 			@PathParam("queryId") String queryId) {
 		try {
-			return VerticaQueryUtil.query(queryId, new String[] {});
+			return VerticaQueryService.query(queryId, new String[] {});
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -71,7 +71,7 @@ public class VerticaResource {
 			@PathParam("queryId") String queryId,
 			@PathParam("param1") String param1) {
 		try {
-			return VerticaQueryUtil.query(queryId, new String[] { param1 });
+			return VerticaQueryService.query(queryId, new String[] { param1 });
 		} catch (Throwable th) {
 			return error("error", th);
 		}
@@ -85,7 +85,7 @@ public class VerticaResource {
 			@PathParam("param1") String param1,
 			@PathParam("param2") String param2) {
 		try {
-			return VerticaQueryUtil.query(queryId, new String[] { param1,
+			return VerticaQueryService.query(queryId, new String[] { param1,
 					param2 });
 		} catch (Throwable th) {
 			return error("error", th);
@@ -101,7 +101,7 @@ public class VerticaResource {
 			@PathParam("param2") String param2,
 			@PathParam("param3") String param3) {
 		try {
-			return VerticaQueryUtil.query(queryId, new String[] { param1,
+			return VerticaQueryService.query(queryId, new String[] { param1,
 					param2, param3 });
 		} catch (Throwable th) {
 			return error("error", th);
@@ -110,7 +110,7 @@ public class VerticaResource {
 
 	private static Object error(String message, Throwable th) {
 		logger.severe(message);
-		Map res = new LinkedHashMap();
+		Map<String, String> res = new LinkedHashMap<String, String>();
 		res.put("error", message + " " + (th != null ? th.getMessage() : ""));
 		if (th != null) {
 			th.printStackTrace();
