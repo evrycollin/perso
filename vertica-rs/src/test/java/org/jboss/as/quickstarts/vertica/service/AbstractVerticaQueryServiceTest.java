@@ -18,4 +18,11 @@ public abstract class AbstractVerticaQueryServiceTest {
 		System.out.println(res);
 	}
 
+	protected void testScript(String scriptId) throws ClassNotFoundException,
+			IOException {
+
+		Assert.assertTrue("script with error",
+				VerticaQueryService.script(scriptId));
+	}
+
 }
