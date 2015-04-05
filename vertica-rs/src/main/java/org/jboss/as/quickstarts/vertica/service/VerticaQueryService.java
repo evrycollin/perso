@@ -18,18 +18,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import com.vertica.jdbc.DataSource;
 
 public class VerticaQueryService {
-	static final Logger logger = Logger.getLogger(VerticaQueryService.class
-			.getName());
-	static final DataSource ds;
-	static final String queryRepository;
-	static final Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
-	static final Map<Class<?>, VerticaTypeConverter> cacheVerticaTypeConverter = new HashMap<Class<?>, VerticaQueryService.VerticaTypeConverter>();
-	static final Map<String, String> cacheQuery = new HashMap<String, String>();
+
+	static final private DataSource ds;
+	static final private String queryRepository;
+	static final private Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
+	static final private Map<Class<?>, VerticaTypeConverter> cacheVerticaTypeConverter = new HashMap<Class<?>, VerticaQueryService.VerticaTypeConverter>();
+	static final private Map<String, String> cacheQuery = new HashMap<String, String>();
 
 	static {
 		ds = new DataSource();
@@ -48,7 +46,7 @@ public class VerticaQueryService {
 		ds.setURL(prop.getProperty("vertica.url"));
 		ds.setUserID(prop.getProperty("vertica.user"));
 		ds.setPassword(prop.getProperty("vertica.password"));
-        ds.setConnSettings("SET LOCALE TO en_GB");
+		ds.setConnSettings("SET LOCALE TO en_GB");
 		queryRepository = prop.getProperty("queries-repository",
 				"vertica-queries");
 
@@ -182,13 +180,14 @@ public class VerticaQueryService {
 	}
 
 	private static void registerVerticaTypeConverters() {
-		cacheVerticaTypeConverter.put(Integer.class, new VerticaTypeConverter() {
-			@Override
-			public void setValue(PreparedStatement ps, int idx, String val)
-					throws Exception {
-				ps.setInt(idx, new Integer(val));
-			}
-		});
+		cacheVerticaTypeConverter.put(Integer.class,
+				new VerticaTypeConverter() {
+					@Override
+					public void setValue(PreparedStatement ps, int idx,
+							String val) throws Exception {
+						ps.setInt(idx, new Integer(val));
+					}
+				});
 		cacheVerticaTypeConverter.put(Double.class, new VerticaTypeConverter() {
 			@Override
 			public void setValue(PreparedStatement ps, int idx, String val)
@@ -203,13 +202,14 @@ public class VerticaQueryService {
 				ps.setLong(idx, new Long(val));
 			}
 		});
-		cacheVerticaTypeConverter.put(BigDecimal.class, new VerticaTypeConverter() {
-			@Override
-			public void setValue(PreparedStatement ps, int idx, String val)
-					throws Exception {
-				ps.setBigDecimal(idx, new BigDecimal(val));
-			}
-		});
+		cacheVerticaTypeConverter.put(BigDecimal.class,
+				new VerticaTypeConverter() {
+					@Override
+					public void setValue(PreparedStatement ps, int idx,
+							String val) throws Exception {
+						ps.setBigDecimal(idx, new BigDecimal(val));
+					}
+				});
 		cacheVerticaTypeConverter.put(String.class, new VerticaTypeConverter() {
 			@Override
 			public void setValue(PreparedStatement ps, int idx, String val)
