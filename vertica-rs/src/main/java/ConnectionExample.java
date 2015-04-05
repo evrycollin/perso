@@ -1,9 +1,11 @@
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Properties;
 
 public class ConnectionExample {
@@ -29,9 +31,10 @@ public class ConnectionExample {
 					"jdbc:vertica://192.168.1.19:5433/tst1", myProp);
 
 			Statement stmt = conn.createStatement();
+			stmt.execute("DROP TABLE IF EXISTS customers CASCADE");
 			stmt.execute("CREATE TABLE customers (CustID int, Last_Name"
 					+ " char(50), First_Name char(50),Email char(50), "
-					+ "Phone_Number char(12))");
+					+ "Phone_Number char(12), Creation_date DATETIME )");
 
 			// Some dummy data to insert.
 			String[] firstNames = new String[] { "Anna", "Bill", "Cindy",
@@ -48,7 +51,7 @@ public class ConnectionExample {
 			// Create the prepared statement
 			PreparedStatement pstmt = conn
 					.prepareStatement("INSERT INTO customers (CustID, Last_Name, First_Name, Email, "
-							+ "Phone_Number) VALUES(?,?,?,?,?)");
+							+ "Phone_Number, Creation_date) VALUES(?,?,?,?,?,?)");
 			// Add rows to a batch in a loop. Each iteration adds a
 			// new row.
 			for (int i = 0; i < firstNames.length; i++) {
@@ -58,6 +61,7 @@ public class ConnectionExample {
 				pstmt.setString(3, firstNames[i]);
 				pstmt.setString(4, emails[i]);
 				pstmt.setString(5, phoneNumbers[i]);
+				pstmt.setTimestamp(6, new Timestamp( System.currentTimeMillis()));
 				// Add row to the batch.
 				pstmt.addBatch();
 			}
@@ -67,14 +71,12 @@ public class ConnectionExample {
 			// Print the resulting table.
 			ResultSet rs = null;
 			rs = stmt.executeQuery("SELECT CustID, First_Name, "
-					+ "Last_Name FROM customers");
+					+ "Last_Name,Creation_date FROM customers");
 			while (rs.next()) {
 				System.out
 						.println(rs.getInt(1) + " - " + rs.getString(2).trim()
-								+ " " + rs.getString(3).trim());
+								+ " " + rs.getString(3).trim()+ " " + rs.getTimestamp(4));
 			}
-			// Cleanup
-			// stmt.execute("DROP TABLE customers CASCADE");
 			conn.close();
 
 		} catch (SQLException e) {

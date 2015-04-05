@@ -27,6 +27,10 @@ public class VerticaQueryService {
 			.getName());
 	static final DataSource ds;
 	static final String queryRepository;
+	static final Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
+	static final Map<Class<?>, VerticaTypeConverter> cacheVerticaTypeConverter = new HashMap<Class<?>, VerticaQueryService.VerticaTypeConverter>();
+	static final Map<String, String> cacheQuery = new HashMap<String, String>();
+
 	static {
 		ds = new DataSource();
 		InputStream configIn = VerticaResource.class.getClassLoader()
@@ -44,9 +48,11 @@ public class VerticaQueryService {
 		ds.setURL(prop.getProperty("vertica.url"));
 		ds.setUserID(prop.getProperty("vertica.user"));
 		ds.setPassword(prop.getProperty("vertica.password"));
+        ds.setConnSettings("SET LOCALE TO en_GB");
 		queryRepository = prop.getProperty("queries-repository",
 				"vertica-queries");
 
+		registerVerticaTypeConverters();
 	}
 
 	public static final Connection getConnection() throws SQLException {
@@ -109,53 +115,9 @@ public class VerticaQueryService {
 		return toReturn;
 	}
 
-	static final Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
-	static final Map<String, String> cacheQuery = new HashMap<String, String>();
-
 	public static Collection<Object> query(String queryId, String[] params)
 			throws ClassNotFoundException, IOException {
 		return query(getQuerySQL(queryId), params, getQueryParamTypes(queryId));
-	}
-
-	public static Collection<Object> query(String query, String[] params,
-			Class<?>[] paramsType) {
-		Connection con = null;
-		List<Object> res = new ArrayList<Object>();
-		try {
-			con = VerticaQueryService.getConnection();
-			System.out.println("Sql > " + query);
-			PreparedStatement ps = con.prepareStatement(query);
-			for (int i = 0; params != null && i < params.length; i++) {
-
-				if (paramsType[i].equals(Integer.class)) {
-					ps.setInt(i + 1, Integer.parseInt(params[i]));
-				} else if (paramsType[i].equals(Double.class)) {
-					ps.setDouble(i + 1, Double.parseDouble(params[i]));
-				} else if (paramsType[i].equals(Long.class)) {
-					ps.setLong(i + 1, Long.parseLong(params[i]));
-				} else if (paramsType[i].equals(BigDecimal.class)) {
-					ps.setBigDecimal(i + 1, new BigDecimal(params[i]));
-				} else if (paramsType[i].equals(String.class)) {
-					ps.setString(i + 1, params[i]);
-				} else {
-					throw new RuntimeException("Type not supported : "
-							+ paramsType[i].getName());
-				}
-			}
-			dumpResultSet(ps.executeQuery(), res);
-			ps.close();
-		} catch (Throwable th) {
-			throw new RuntimeException(th);
-
-		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (Throwable ttt) {
-				}
-		}
-		return res;
-
 	}
 
 	private static void dumpResultSet(ResultSet rs, List<Object> res)
@@ -179,4 +141,82 @@ public class VerticaQueryService {
 		}
 	}
 
+	public static Collection<Object> query(String query, String[] params,
+			Class<?>[] paramsType) {
+		Connection con = null;
+		List<Object> res = new ArrayList<Object>();
+		try {
+			con = VerticaQueryService.getConnection();
+			System.out.println("Sql > " + query);
+			PreparedStatement ps = con.prepareStatement(query);
+			for (int i = 0; params != null && i < params.length; i++) {
+
+				VerticaTypeConverter converter = cacheVerticaTypeConverter
+						.get(paramsType[i]);
+				if (converter != null) {
+					converter.setValue(ps, i + 1, params[i]);
+				} else {
+					throw new RuntimeException("Type not supported : "
+							+ paramsType[i].getName());
+				}
+			}
+			dumpResultSet(ps.executeQuery(), res);
+			ps.close();
+		} catch (Throwable th) {
+			throw new RuntimeException(th);
+
+		} finally {
+			if (con != null)
+				try {
+					con.close();
+				} catch (Throwable ttt) {
+				}
+		}
+		return res;
+
+	}
+
+	interface VerticaTypeConverter {
+		void setValue(PreparedStatement ps, int idx, String val)
+				throws Exception;
+	}
+
+	private static void registerVerticaTypeConverters() {
+		cacheVerticaTypeConverter.put(Integer.class, new VerticaTypeConverter() {
+			@Override
+			public void setValue(PreparedStatement ps, int idx, String val)
+					throws Exception {
+				ps.setInt(idx, new Integer(val));
+			}
+		});
+		cacheVerticaTypeConverter.put(Double.class, new VerticaTypeConverter() {
+			@Override
+			public void setValue(PreparedStatement ps, int idx, String val)
+					throws Exception {
+				ps.setDouble(idx, new Double(val));
+			}
+		});
+		cacheVerticaTypeConverter.put(Long.class, new VerticaTypeConverter() {
+			@Override
+			public void setValue(PreparedStatement ps, int idx, String val)
+					throws Exception {
+				ps.setLong(idx, new Long(val));
+			}
+		});
+		cacheVerticaTypeConverter.put(BigDecimal.class, new VerticaTypeConverter() {
+			@Override
+			public void setValue(PreparedStatement ps, int idx, String val)
+					throws Exception {
+				ps.setBigDecimal(idx, new BigDecimal(val));
+			}
+		});
+		cacheVerticaTypeConverter.put(String.class, new VerticaTypeConverter() {
+			@Override
+			public void setValue(PreparedStatement ps, int idx, String val)
+					throws Exception {
+				ps.setString(idx, val);
+			}
+		});
+
+	}
 }

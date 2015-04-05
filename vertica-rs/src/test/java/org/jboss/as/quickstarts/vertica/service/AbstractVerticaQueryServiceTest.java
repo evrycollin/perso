@@ -15,6 +15,7 @@ public abstract class AbstractVerticaQueryServiceTest {
 
 		Assert.assertNotNull("nothing found for query " + queryId, res);
 		Assert.assertTrue("nothing found for query " + queryId, res.size() > 0);
+		System.out.println(res);
 	}
 
 }
