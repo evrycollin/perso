@@ -28,9 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * A JAX-RS resource for exposing REST endpoints for Vertica
@@ -58,15 +56,13 @@ public class VerticaResource {
 	@Path("repo/{path: .*}")
 	@Produces({ "application/json" })
 	public Object queryRepo(@PathParam("path") String path) {
-
 		try {
 			String[] params = path.split("\\/");
-			
 			String queryId = params[0];
 			String[] qParams = new String [params.length-1];
-			if( params.length>1 )
+			if( params.length>1 ){
 				System.arraycopy(params, 1, qParams, 0, params.length-1);
-					
+			}
 			return VerticaQueryService.query(queryId, qParams);
 		} catch (Throwable th) {
 			return error("error", th);
