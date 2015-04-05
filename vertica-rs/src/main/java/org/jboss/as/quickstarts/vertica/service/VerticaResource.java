@@ -28,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
@@ -52,61 +53,25 @@ public class VerticaResource {
 		}
 	}
 
+	
 	@GET
-	@Path("repo/{queryId}")
+	@Path("repo/{path: .*}")
 	@Produces({ "application/json" })
-	public Object query1p(@Context UriInfo ui,
-			@PathParam("queryId") String queryId) {
-		try {
-			return VerticaQueryService.query(queryId, new String[] {});
-		} catch (Throwable th) {
-			return error("error", th);
-		}
-	}
+	public Object queryRepo(@PathParam("path") String path) {
 
-	@GET
-	@Path("repo/{queryId}/{param1}")
-	@Produces({ "application/json" })
-	public Object query1p(@Context UriInfo ui,
-			@PathParam("queryId") String queryId,
-			@PathParam("param1") String param1) {
 		try {
-			return VerticaQueryService.query(queryId, new String[] { param1 });
+			String[] params = path.split("\\/");
+			
+			String queryId = params[0];
+			String[] qParams = new String [params.length-1];
+			if( params.length>1 )
+				System.arraycopy(params, 1, qParams, 0, params.length-1);
+					
+			return VerticaQueryService.query(queryId, qParams);
 		} catch (Throwable th) {
 			return error("error", th);
 		}
-	}
-
-	@GET
-	@Path("repo/{queryId}/{param1}}/{param2}")
-	@Produces({ "application/json" })
-	public Object query2p(@Context UriInfo ui,
-			@PathParam("queryId") String queryId,
-			@PathParam("param1") String param1,
-			@PathParam("param2") String param2) {
-		try {
-			return VerticaQueryService.query(queryId, new String[] { param1,
-					param2 });
-		} catch (Throwable th) {
-			return error("error", th);
-		}
-	}
-
-	@GET
-	@Path("repo/{queryId}/{param1}}/{param2}/{param3}")
-	@Produces({ "application/json" })
-	public Object query3p(@Context UriInfo ui,
-			@PathParam("queryId") String queryId,
-			@PathParam("param1") String param1,
-			@PathParam("param2") String param2,
-			@PathParam("param3") String param3) {
-		try {
-			return VerticaQueryService.query(queryId, new String[] { param1,
-					param2, param3 });
-		} catch (Throwable th) {
-			return error("error", th);
-		}
-	}
+	}	
 
 	private static Object error(String message, Throwable th) {
 		logger.severe(message);
