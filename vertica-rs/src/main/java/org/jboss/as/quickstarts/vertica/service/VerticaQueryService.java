@@ -122,8 +122,7 @@ public class VerticaQueryService {
 		return query(getQuerySQL(queryId), params, getQueryParamTypes(queryId));
 	}
 
-	public static boolean script(String scriptId)
-			throws ClassNotFoundException, IOException {
+	public static boolean script(String scriptId) {
 
 		Connection con = null;
 		try {

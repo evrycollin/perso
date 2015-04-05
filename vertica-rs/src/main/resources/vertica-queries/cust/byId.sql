@@ -1,3 +1,2 @@
--- sample query with a parameter
--- test http://localhost:8080/vertica-rs/api/repo/cust.byId/2
+-- http://localhost:8080/vertica-rs/api/query/cust.byId/[id]
 select * from customers where CustID = ?

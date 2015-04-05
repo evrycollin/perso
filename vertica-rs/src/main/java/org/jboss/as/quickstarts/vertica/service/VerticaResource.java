@@ -53,7 +53,7 @@ public class VerticaResource {
 
 	
 	@GET
-	@Path("repo/{path: .*}")
+	@Path("query/{path: .*}")
 	@Produces({ "application/json" })
 	public Object queryRepo(@PathParam("path") String path) {
 		try {
