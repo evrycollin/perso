@@ -26,9 +26,7 @@ public class VerticaQueryUtilTest {
 	private void testQuery(String queryId, String[] params)
 			throws ClassNotFoundException, IOException {
 
-		Collection res = (Collection) VerticaQueryUtil.query(
-				VerticaQueryUtil.getQuerySQL(queryId), params,
-				VerticaQueryUtil.getQueryParamTypes(queryId));
+		Collection res = (Collection) VerticaQueryUtil.query(queryId, params);
 
 		Assert.assertNotNull("nothing found for query " + queryId, res);
 		Assert.assertTrue("nothing found for query " + queryId, res.size() > 0);

@@ -110,6 +110,11 @@ public class VerticaQueryUtil {
 	static final Map<String, Class[]> cacheQueryParamType = new HashMap<String, Class[]>();
 	static final Map<String, String> cacheQuery = new HashMap<String, String>();
 
+	public static Object query(String queryId, String[] params) throws ClassNotFoundException, IOException {
+		return query( getQuerySQL(queryId), params, getQueryParamTypes(queryId) );
+	}
+
+	
 	public static Object query(String query, String[] params, Class[] paramsType) {
 		Connection con = null;
 		List res = new ArrayList();
@@ -137,7 +142,7 @@ public class VerticaQueryUtil {
 			dumpResultSet(ps.executeQuery(), res);
 			ps.close();
 		} catch (Throwable th) {
-			return error("unexpected error", th);
+			return new RuntimeException(th);
 
 		} finally {
 			if (con != null)
@@ -170,17 +175,6 @@ public class VerticaQueryUtil {
 		}
 	}
 
-	public static Object error(String message, Throwable th) {
-		logger.severe(message);
-		Map res = new LinkedHashMap();
-		res.put("error", message + " " + (th != null ? th.getMessage() : ""));
-		if (th != null) {
-			th.printStackTrace();
-			StringWriter buf = new StringWriter();
-			th.printStackTrace(new PrintWriter(buf));
-			res.put("stacktrace", buf.toString());
-		}
-		return res;
-	}
+	
 
 }

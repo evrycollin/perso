@@ -16,6 +16,10 @@
  */
 package org.jboss.as.quickstarts.vertica.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
@@ -32,13 +36,20 @@ import javax.ws.rs.core.UriInfo;
  */
 @Path("/")
 public class VerticaResource {
-	
+
+	static final private Logger logger = Logger.getLogger(VerticaResource.class
+			.getName());
+
 	@GET
 	@Path("query")
 	@Produces({ "application/json" })
 	public Object query(@Context SecurityContext context,
 			@QueryParam("query") String query) {
-		return VerticaQueryUtil.query(query, new String[] {}, new Class[] {});
+		try {
+			return VerticaQueryUtil.query(query, null, null);
+		} catch (Throwable th) {
+			return error("error", th);
+		}
 	}
 
 	@GET
@@ -47,11 +58,9 @@ public class VerticaResource {
 	public Object query1p(@Context UriInfo ui,
 			@PathParam("queryId") String queryId) {
 		try {
-			return VerticaQueryUtil.query(
-					VerticaQueryUtil.getQuerySQL(queryId), new String[] {},
-					VerticaQueryUtil.getQueryParamTypes(queryId));
+			return VerticaQueryUtil.query(queryId, new String[] {});
 		} catch (Throwable th) {
-			return VerticaQueryUtil.error("error", th);
+			return error("error", th);
 		}
 	}
 
@@ -62,12 +71,9 @@ public class VerticaResource {
 			@PathParam("queryId") String queryId,
 			@PathParam("param1") String param1) {
 		try {
-			return VerticaQueryUtil.query(
-					VerticaQueryUtil.getQuerySQL(queryId),
-					new String[] { param1 },
-					VerticaQueryUtil.getQueryParamTypes(queryId));
+			return VerticaQueryUtil.query(queryId, new String[] { param1 });
 		} catch (Throwable th) {
-			return VerticaQueryUtil.error("error", th);
+			return error("error", th);
 		}
 	}
 
@@ -79,12 +85,10 @@ public class VerticaResource {
 			@PathParam("param1") String param1,
 			@PathParam("param2") String param2) {
 		try {
-			return VerticaQueryUtil.query(
-					VerticaQueryUtil.getQuerySQL(queryId), new String[] {
-							param1, param2 },
-					VerticaQueryUtil.getQueryParamTypes(queryId));
+			return VerticaQueryUtil.query(queryId, new String[] { param1,
+					param2 });
 		} catch (Throwable th) {
-			return VerticaQueryUtil.error("error", th);
+			return error("error", th);
 		}
 	}
 
@@ -97,13 +101,24 @@ public class VerticaResource {
 			@PathParam("param2") String param2,
 			@PathParam("param3") String param3) {
 		try {
-			return VerticaQueryUtil.query(
-					VerticaQueryUtil.getQuerySQL(queryId), new String[] {
-							param1, param2, param3 },
-					VerticaQueryUtil.getQueryParamTypes(queryId));
+			return VerticaQueryUtil.query(queryId, new String[] { param1,
+					param2, param3 });
 		} catch (Throwable th) {
-			return VerticaQueryUtil.error("error", th);
+			return error("error", th);
 		}
+	}
+
+	private static Object error(String message, Throwable th) {
+		logger.severe(message);
+		Map res = new LinkedHashMap();
+		res.put("error", message + " " + (th != null ? th.getMessage() : ""));
+		if (th != null) {
+			th.printStackTrace();
+			StringWriter buf = new StringWriter();
+			th.printStackTrace(new PrintWriter(buf));
+			res.put("stacktrace", buf.toString());
+		}
+		return res;
 	}
 
 }
