@@ -242,8 +242,7 @@ public class VerticaQueryService {
 
 	}
 
-	private static void runScript(Connection conn, Reader reader)
-			throws IOException, SQLException {
+	private static void runScript(Connection conn, Reader reader) {
 		StringBuffer command = null;
 		boolean fullLineDelimiter = false;
 		boolean stopOnError = true;
@@ -317,21 +316,8 @@ public class VerticaQueryService {
 				}
 			}
 
-		} catch (SQLException e) {
-			e.fillInStackTrace();
-			printlnError("Error executing: " + command);
-			printlnError(e);
-			throw e;
-		} catch (IOException e) {
-			e.fillInStackTrace();
-			printlnError("Error executing: " + command);
-			printlnError(e);
-			throw e;
-		} finally {
-			try {
-				conn.rollback();
-			} catch (Throwable ignore) {
-			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
