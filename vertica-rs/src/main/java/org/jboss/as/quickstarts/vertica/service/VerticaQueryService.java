@@ -45,7 +45,7 @@ public class VerticaQueryService {
 		try {
 			prop.load(configIn);
 		} catch (Throwable th) {
-			throw new RuntimeException("cannot load properties from config", th);
+			throw new RuntimeException("cannot load properties from vertica.config", th);
 		}
 		ds.setURL(prop.getProperty("vertica.url"));
 		ds.setUserID(prop.getProperty("vertica.user"));
