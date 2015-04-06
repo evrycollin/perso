@@ -166,7 +166,7 @@ public class VerticaQueryService {
 		Connection con = null;
 		List<Object> res = new ArrayList<Object>();
 		try {
-			con = VerticaQueryService.getConnection();
+			con = getConnection();
 			System.out.println("Sql > " + query);
 			PreparedStatement ps = con.prepareStatement(query);
 			for (int i = 0; params != null && i < params.length; i++) {
