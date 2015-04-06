@@ -51,6 +51,7 @@ public class VerticaQueryService {
 		ds.setUserID(prop.getProperty("vertica.user"));
 		ds.setPassword(prop.getProperty("vertica.password"));
 		ds.setConnSettings("SET LOCALE TO en_GB");
+		ds.setAutoCommitOnByDefault(true);
 		queryRepository = prop.getProperty("queries-repository",
 				"vertica-queries");
 
@@ -140,11 +141,11 @@ public class VerticaQueryService {
 		}
 	}
 
-	private static void dumpResultSet(ResultSet rs, List<Object> res)
+	public static void dumpResultSet(ResultSet rs, List<Object> res)
 			throws Exception {
 		ResultSetMetaData meta = rs.getMetaData();
 		List<String> colNames = new ArrayList<String>();
-		for (int i = 1; i < meta.getColumnCount(); i++) {
+		for (int i = 1; i <= meta.getColumnCount(); i++) {
 			colNames.add(meta.getColumnName(i));
 		}
 		while (rs.next()) {

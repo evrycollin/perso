@@ -36,14 +36,30 @@
 			<div class="panel-body">
 				<form class="form-horizontal" role="form"
 					action="api/script/init-db" target="_blank">
-
 					<div class="form-group">
 						<label class="control-label col-sm-4" for="query">api/script/ init-db</label>
 						<div class="col-sm-8">
-							<button type="submit" class="btn btn-success">Run</button>
+							<button type="submit" class="btn btn-success">Init</button>
 						</div>
 					</div>
-
+				</form>
+				<form class="form-horizontal" role="form"
+					action="api/script/load.test_load" target="_blank">
+					<div class="form-group">
+						<label class="control-label col-sm-4" for="query">api/script/ load.test_load</label>
+						<div class="col-sm-8">
+							<button type="submit" class="btn btn-success">Import</button>
+						</div>
+					</div>
+				</form>
+				<form class="form-horizontal" role="form"
+					action="api/script/load.test_load_gzip" target="_blank">
+					<div class="form-group">
+						<label class="control-label col-sm-4" for="query">api/script/ load.test_load_gzip</label>
+						<div class="col-sm-8">
+							<button type="submit" class="btn btn-success">Import</button>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -75,6 +91,17 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Query repository :</div>
 			<div class="panel-body">
+      
+				<form class="form-horizontal" role="form"
+					action="api/query/sys.streams" target="_blank">
+					<div class="form-group">
+						<label class="control-label col-sm-4" for="query">api/query/ sys.streams</label>
+						<div class="col-sm-8">
+							<button type="submit" class="btn btn-success">Test</button>
+						</div>
+					</div>
+				</form>
+        
 				<form class="form-horizontal" role="form"
 					action="api/query/cust.all" target="_blank">
 
