@@ -141,8 +141,9 @@ public class VerticaQueryService {
 		}
 	}
 
-	public static void dumpResultSet(ResultSet rs, List<Object> res)
+	public static Collection<Object> dumpResultSet(ResultSet rs)
 			throws Exception {
+		List<Object> res = new ArrayList<Object>();
 		ResultSetMetaData meta = rs.getMetaData();
 		List<String> colNames = new ArrayList<String>();
 		for (int i = 1; i <= meta.getColumnCount(); i++) {
@@ -160,12 +161,13 @@ public class VerticaQueryService {
 			}
 			res.add(row);
 		}
+		return res;
 	}
 
 	public static Collection<Object> query(String query, String[] params,
 			Class<?>[] paramsType) {
 		Connection con = null;
-		List<Object> res = new ArrayList<Object>();
+		Collection<Object> res = null;
 		try {
 			con = getConnection();
 			System.out.println("Sql > " + query);
@@ -181,7 +183,7 @@ public class VerticaQueryService {
 							+ paramsType[i].getName());
 				}
 			}
-			dumpResultSet(ps.executeQuery(), res);
+			res = dumpResultSet(ps.executeQuery());
 			ps.close();
 		} catch (Throwable th) {
 			throw new RuntimeException(th);
