@@ -16,12 +16,6 @@
  */
 package org.jboss.as.quickstarts.vertica.web;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -36,16 +30,12 @@ import org.jboss.as.quickstarts.vertica.service.VerticaQueryService;
  * A JAX-RS resource for exposing REST endpoints for Vertica
  */
 @Path("/")
-public class VerticaResource {
-
-	static final private Logger logger = Logger.getLogger(VerticaResource.class
-			.getName());
+public class VerticaResource extends AbstractResource {
 
 	@GET
 	@Path("query")
 	@Produces({ "application/json" })
-	public Object query(@Context SecurityContext context,
-			@QueryParam("query") String query) {
+	public Object querySql(@QueryParam("query") String query) {
 		try {
 			return VerticaQueryService.query(query);
 		} catch (Throwable th) {
@@ -53,7 +43,6 @@ public class VerticaResource {
 		}
 	}
 
-	
 	@GET
 	@Path("query/{path: .*}")
 	@Produces({ "application/json" })
@@ -61,15 +50,15 @@ public class VerticaResource {
 		try {
 			String[] params = path.split("\\/");
 			String queryId = params[0];
-			String[] qParams = new String [params.length-1];
-			if( params.length>1 ){
-				System.arraycopy(params, 1, qParams, 0, params.length-1);
+			String[] qParams = new String[params.length - 1];
+			if (params.length > 1) {
+				System.arraycopy(params, 1, qParams, 0, params.length - 1);
 			}
 			return VerticaQueryService.query(queryId, qParams);
 		} catch (Throwable th) {
 			return error("error", th);
 		}
-	}	
+	}
 
 	@GET
 	@Path("script/{script}")
@@ -80,19 +69,6 @@ public class VerticaResource {
 		} catch (Throwable th) {
 			return error("error", th);
 		}
-	}
-	
-	private static Object error(String message, Throwable th) {
-		logger.severe(message);
-		Map<String, String> res = new LinkedHashMap<String, String>();
-		res.put("error", message + " " + (th != null ? th.getMessage() : ""));
-		if (th != null) {
-			th.printStackTrace();
-			StringWriter buf = new StringWriter();
-			th.printStackTrace(new PrintWriter(buf));
-			res.put("stacktrace", buf.toString());
-		}
-		return res;
 	}
 
 }
