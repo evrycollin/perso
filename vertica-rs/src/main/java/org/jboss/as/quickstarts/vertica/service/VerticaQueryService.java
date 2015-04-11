@@ -4,37 +4,39 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jboss.as.quickstarts.vertica.utils.DbTools;
+import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegister.VerticaTypeConverter;
+import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegister;
+
 import com.vertica.jdbc.DataSource;
 
 public class VerticaQueryService {
-	static final private String DEFAULT_DELIMITER = ";";
-	static final private DataSource ds;
-	static final private String queryRepository;
+	
+	// connection pool
+	static private DataSource ds;
+	// base folder in classpath to retrieve sql files
+	static private String queryRepository;
+	// cache for queries and parameters from file def
 	static final private Map<String, Class<?>[]> cacheQueryParamType = new HashMap<String, Class<?>[]>();
-	static final private Map<Class<?>, VerticaTypeConverter> cacheVerticaTypeConverter = new HashMap<Class<?>, VerticaQueryService.VerticaTypeConverter>();
 	static final private Map<String, String> cacheQuery = new HashMap<String, String>();
 
 	static {
-		ds = new DataSource();
+		init();
+	}
+
+	private static void init() {
 		InputStream configIn = VerticaResource.class.getClassLoader()
 				.getResourceAsStream("vertica.config");
 		if (configIn == null) {
@@ -45,17 +47,20 @@ public class VerticaQueryService {
 		try {
 			prop.load(configIn);
 		} catch (Throwable th) {
-			throw new RuntimeException("cannot load properties from vertica.config", th);
+			throw new RuntimeException(
+					"cannot load properties from vertica.config", th);
 		}
+		// init datasource from loaded properties
+		ds = new DataSource();
 		ds.setURL(prop.getProperty("vertica.url"));
 		ds.setUserID(prop.getProperty("vertica.user"));
 		ds.setPassword(prop.getProperty("vertica.password"));
 		ds.setConnSettings("SET LOCALE TO en_GB");
 		ds.setAutoCommitOnByDefault(true);
+		// init query repository base folder from loaded properties
 		queryRepository = prop.getProperty("queries-repository",
 				"vertica-queries");
 
-		registerVerticaTypeConverters();
 	}
 
 	public static final Connection getConnection() throws SQLException {
@@ -118,50 +123,14 @@ public class VerticaQueryService {
 		return toReturn;
 	}
 
+	public static Collection<Object> query(String sqlquery)
+			throws ClassNotFoundException, IOException {
+		return query(sqlquery, null, null);
+	}
+
 	public static Collection<Object> query(String queryId, String[] params)
 			throws ClassNotFoundException, IOException {
 		return query(getQuerySQL(queryId), params, getQueryParamTypes(queryId));
-	}
-
-	public static boolean script(String scriptId) {
-
-		Connection con = null;
-		try {
-			con = VerticaQueryService.getConnection();
-			runScript(con, new StringReader(getQuerySQL(scriptId)));
-			return true;
-		} catch (Throwable th) {
-			throw new RuntimeException(th);
-		} finally {
-			if (con != null)
-				try {
-					con.close();
-				} catch (Throwable ttt) {
-				}
-		}
-	}
-
-	public static Collection<Object> dumpResultSet(ResultSet rs)
-			throws Exception {
-		List<Object> res = new ArrayList<Object>();
-		ResultSetMetaData meta = rs.getMetaData();
-		List<String> colNames = new ArrayList<String>();
-		for (int i = 1; i <= meta.getColumnCount(); i++) {
-			colNames.add(meta.getColumnName(i));
-		}
-		while (rs.next()) {
-			Map<String, Object> row = new LinkedHashMap<String, Object>();
-			for (String col : colNames) {
-				Object o = rs.getObject(col);
-				if (o != null && o instanceof String) {
-					row.put(col, o.toString().trim());
-				} else {
-					row.put(col, o);
-				}
-			}
-			res.add(row);
-		}
-		return res;
 	}
 
 	public static Collection<Object> query(String query, String[] params,
@@ -174,8 +143,9 @@ public class VerticaQueryService {
 			PreparedStatement ps = con.prepareStatement(query);
 			for (int i = 0; params != null && i < params.length; i++) {
 
-				VerticaTypeConverter converter = cacheVerticaTypeConverter
-						.get(paramsType[i]);
+				VerticaTypeConverter converter = VerticaTypeRegister
+						.getConverter(paramsType[i]);
+
 				if (converter != null) {
 					converter.setValue(ps, i + 1, params[i]);
 				} else {
@@ -183,7 +153,7 @@ public class VerticaQueryService {
 							+ paramsType[i].getName());
 				}
 			}
-			res = dumpResultSet(ps.executeQuery());
+			res = DbTools.dumpResultSet(ps.executeQuery());
 			ps.close();
 		} catch (Throwable th) {
 			throw new RuntimeException(th);
@@ -199,141 +169,22 @@ public class VerticaQueryService {
 
 	}
 
-	interface VerticaTypeConverter {
-		void setValue(PreparedStatement ps, int idx, String val)
-				throws Exception;
-	}
+	public static boolean script(String scriptId) {
 
-	private static void registerVerticaTypeConverters() {
-		cacheVerticaTypeConverter.put(Integer.class,
-				new VerticaTypeConverter() {
-					@Override
-					public void setValue(PreparedStatement ps, int idx,
-							String val) throws Exception {
-						ps.setInt(idx, new Integer(val));
-					}
-				});
-		cacheVerticaTypeConverter.put(Double.class, new VerticaTypeConverter() {
-			@Override
-			public void setValue(PreparedStatement ps, int idx, String val)
-					throws Exception {
-				ps.setDouble(idx, new Double(val));
-			}
-		});
-		cacheVerticaTypeConverter.put(Long.class, new VerticaTypeConverter() {
-			@Override
-			public void setValue(PreparedStatement ps, int idx, String val)
-					throws Exception {
-				ps.setLong(idx, new Long(val));
-			}
-		});
-		cacheVerticaTypeConverter.put(BigDecimal.class,
-				new VerticaTypeConverter() {
-					@Override
-					public void setValue(PreparedStatement ps, int idx,
-							String val) throws Exception {
-						ps.setBigDecimal(idx, new BigDecimal(val));
-					}
-				});
-		cacheVerticaTypeConverter.put(String.class, new VerticaTypeConverter() {
-			@Override
-			public void setValue(PreparedStatement ps, int idx, String val)
-					throws Exception {
-				ps.setString(idx, val);
-			}
-		});
-
-	}
-
-	private static void runScript(Connection conn, Reader reader) {
-		StringBuffer command = null;
-		boolean fullLineDelimiter = false;
-		boolean stopOnError = true;
-
+		Connection con = null;
 		try {
-			LineNumberReader lineReader = new LineNumberReader(reader);
-			String line = null;
-			while ((line = lineReader.readLine()) != null) {
-				if (command == null) {
-					command = new StringBuffer();
+			con = VerticaQueryService.getConnection();
+			DbTools.runScript(con, new StringReader(getQuerySQL(scriptId)));
+			return true;
+		} catch (Throwable th) {
+			throw new RuntimeException(th);
+		} finally {
+			if (con != null)
+				try {
+					con.close();
+				} catch (Throwable ttt) {
 				}
-				String trimmedLine = line.trim();
-				if (trimmedLine.startsWith("--")) {
-					println(trimmedLine);
-				} else if (trimmedLine.length() < 1
-						|| trimmedLine.startsWith("//")) {
-					// Do nothing
-				} else if (trimmedLine.length() < 1
-						|| trimmedLine.startsWith("--")) {
-					// Do nothing
-				} else if (!fullLineDelimiter
-						&& trimmedLine.endsWith(DEFAULT_DELIMITER)
-						|| fullLineDelimiter
-						&& trimmedLine.equals(DEFAULT_DELIMITER)) {
-					command.append(line.substring(0,
-							line.lastIndexOf(DEFAULT_DELIMITER)));
-					command.append(" ");
-					Statement statement = conn.createStatement();
-
-					println(command);
-
-					boolean hasResults = false;
-					if (stopOnError) {
-						hasResults = statement.execute(command.toString());
-					} else {
-						try {
-							statement.execute(command.toString());
-						} catch (SQLException e) {
-							e.fillInStackTrace();
-							printlnError("Error executing: " + command);
-							printlnError(e);
-						}
-					}
-
-					ResultSet rs = statement.getResultSet();
-					if (hasResults && rs != null) {
-						ResultSetMetaData md = rs.getMetaData();
-						int cols = md.getColumnCount();
-						for (int i = 0; i < cols; i++) {
-							String name = md.getColumnLabel(i);
-							print(name + "\t");
-						}
-						println("");
-						while (rs.next()) {
-							for (int i = 0; i < cols; i++) {
-								String value = rs.getString(i);
-								print(value + "\t");
-							}
-							println("");
-						}
-					}
-
-					command = null;
-					try {
-						statement.close();
-					} catch (Exception e) {
-					}
-				} else {
-					command.append(line);
-					command.append(" ");
-				}
-			}
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
-	}
-
-	private static void print(Object o) {
-		System.out.print(o);
-	}
-
-	private static void println(Object o) {
-		System.out.println(o);
-	}
-
-	private static void printlnError(Object o) {
-		System.err.println(o);
 	}
 
 }

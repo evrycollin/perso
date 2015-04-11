@@ -45,7 +45,7 @@ public class VerticaResource {
 	public Object query(@Context SecurityContext context,
 			@QueryParam("query") String query) {
 		try {
-			return VerticaQueryService.query(query, null, null);
+			return VerticaQueryService.query(query);
 		} catch (Throwable th) {
 			return error("error", th);
 		}

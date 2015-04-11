@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.quickstarts.vertica.service.VerticaQueryService;
+import org.jboss.as.quickstarts.vertica.utils.DbTools;
 
 public class Example1 {
 
@@ -21,9 +22,7 @@ public class Example1 {
 			// Create the prepared statement
 			ResultSet rs = stmt.executeQuery();
 			
-			List<Object> res = new ArrayList();
-			VerticaQueryService.dumpResultSet(rs, res);
-			System.out.println(res);
+			System.out.println(DbTools.dumpResultSet(rs));
 			
 			
 			while (rs.next()) {
