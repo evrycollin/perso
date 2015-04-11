@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jboss.as.quickstarts.vertica.utils.DbTools;
-import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegister.VerticaTypeConverter;
-import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegister;
+import org.jboss.as.quickstarts.vertica.utils.VerticaQueryTools;
+import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegistry.VerticaTypeConverter;
+import org.jboss.as.quickstarts.vertica.utils.VerticaTypeRegistry;
+import org.jboss.as.quickstarts.vertica.web.VerticaResource;
 
 import com.vertica.jdbc.DataSource;
 
@@ -143,7 +144,7 @@ public class VerticaQueryService {
 			PreparedStatement ps = con.prepareStatement(query);
 			for (int i = 0; params != null && i < params.length; i++) {
 
-				VerticaTypeConverter converter = VerticaTypeRegister
+				VerticaTypeConverter converter = VerticaTypeRegistry
 						.getConverter(paramsType[i]);
 
 				if (converter != null) {
@@ -153,7 +154,7 @@ public class VerticaQueryService {
 							+ paramsType[i].getName());
 				}
 			}
-			res = DbTools.dumpResultSet(ps.executeQuery());
+			res = VerticaQueryTools.dumpResultSet(ps.executeQuery());
 			ps.close();
 		} catch (Throwable th) {
 			throw new RuntimeException(th);
@@ -174,7 +175,7 @@ public class VerticaQueryService {
 		Connection con = null;
 		try {
 			con = VerticaQueryService.getConnection();
-			DbTools.runScript(con, new StringReader(getQuerySQL(scriptId)));
+			VerticaQueryTools.runScript(con, new StringReader(getQuerySQL(scriptId)));
 			return true;
 		} catch (Throwable th) {
 			throw new RuntimeException(th);

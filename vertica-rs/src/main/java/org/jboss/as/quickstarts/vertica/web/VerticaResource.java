@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.as.quickstarts.vertica.service;
+package org.jboss.as.quickstarts.vertica.web;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,6 +29,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
+
+import org.jboss.as.quickstarts.vertica.service.VerticaQueryService;
 
 /**
  * A JAX-RS resource for exposing REST endpoints for Vertica

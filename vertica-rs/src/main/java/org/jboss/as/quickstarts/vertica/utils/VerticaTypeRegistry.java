@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VerticaTypeRegister {
+public class VerticaTypeRegistry {
 
 	public interface VerticaTypeConverter {
 		void setValue(PreparedStatement ps, int idx, String val) throws Exception;
