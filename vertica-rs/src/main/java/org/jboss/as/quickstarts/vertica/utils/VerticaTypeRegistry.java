@@ -58,8 +58,16 @@ public class VerticaTypeRegistry {
 
 	}
 
-	public static VerticaTypeConverter getConverter(Class<?> type) {
+	private static VerticaTypeConverter getConverter(Class<?> type) {
 		return cached.get(type);
+	}
+	
+	public static void setParameter(PreparedStatement ps, int idx, Class<?> type, String value ) throws Exception {
+		VerticaTypeConverter converter = getConverter(type);
+		if( converter==null ) {
+			throw new RuntimeException("type not supported : "+type);
+		}
+		converter.setValue(ps, idx, value);
 	}
 
 }
