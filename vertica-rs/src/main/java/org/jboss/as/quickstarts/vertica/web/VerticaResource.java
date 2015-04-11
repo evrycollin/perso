@@ -37,7 +37,7 @@ public class VerticaResource extends AbstractResource {
 	@Produces({ "application/json" })
 	public Object querySql(@QueryParam("query") String query) {
 		try {
-			return VerticaQueryService.query(query);
+			return VerticaQueryService.querySql(query);
 		} catch (Throwable th) {
 			return error("error", th);
 		}

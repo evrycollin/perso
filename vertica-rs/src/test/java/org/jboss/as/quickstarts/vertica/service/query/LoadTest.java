@@ -12,7 +12,7 @@ public class LoadTest extends AbstractVerticaQueryServiceTest {
 	public void testCust() {
 		try {
 			Collection<Object> res = (Collection<Object>) VerticaQueryService
-					.query("select count(*) from test_load", null, null);
+					.querySql("select count(*) from test_load");
 
 			System.out.println(res);
 

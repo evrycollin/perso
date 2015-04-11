@@ -124,7 +124,7 @@ public class VerticaQueryService {
 		return toReturn;
 	}
 
-	public static Collection<Object> query(String sqlquery)
+	public static Collection<Object> querySql(String sqlquery)
 			throws ClassNotFoundException, IOException {
 		return query(sqlquery, null, null);
 	}
