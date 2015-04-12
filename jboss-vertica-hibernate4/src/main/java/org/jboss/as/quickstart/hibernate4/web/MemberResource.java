@@ -36,12 +36,12 @@ public class MemberResource {
 
 
     @Inject
-    private MemberService memberRegistration;
+    private MemberService memberService;
 
     @GET
     @Produces({ "application/json" })
     public List<Member> members() {
-	return memberRegistration.findAllOrderedByName();
+	return memberService.findAllOrderedByName();
 
     }
 
@@ -49,14 +49,14 @@ public class MemberResource {
     @Path("{id}")
     @Produces({ "application/json" })
     public Object getById(@PathParam("id") Long id) {
-	return memberRegistration.findById(id);
+	return memberService.findById(id);
     }
 
     @DELETE
     @Path("{id}")
     @Produces({ "application/json" })
     public boolean delete(@PathParam("id") Long id) throws Exception {
-	memberRegistration.delete(id);
+	memberService.delete(id);
 	return true;
     }
 
@@ -64,7 +64,7 @@ public class MemberResource {
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     public boolean register(Member member) throws Exception {
-	memberRegistration.register(member);
+	memberService.register(member);
 	return true;
     }
 
@@ -72,7 +72,7 @@ public class MemberResource {
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     public boolean save(Member member) throws Exception {
-	memberRegistration.save(member);
+	memberService.save(member);
 	return true;
     }
 

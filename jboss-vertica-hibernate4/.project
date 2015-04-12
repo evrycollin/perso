@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>jboss-hibernate4</name>
+	<name>jboss-vertica-hibernate4</name>
 	<comment>JBoss EAP Quickstart: Application that uses Hibernate 4. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
 	</projects>
