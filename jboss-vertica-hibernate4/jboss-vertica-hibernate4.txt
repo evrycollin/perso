@@ -30,3 +30,57 @@ pour utiliser ce dialiect, définir dans src\main\resources\META-INF\persistence
 	</datasource>
 
 et déposer le driver jdbc dans le dossier standalone/deployments de jboss ( ici vertica-jdbc-7.1.1-0.jar )
+
+Ajout d'une API Rest pour l'entité member ( org.jboss.as.quickstart.hibernate4.web.MemberResource ):
+
+* Tous les members
+GET http://localhost:8080/jboss-hibernate4/api/members  :  findAllOrderedByName
+[
+  {
+    "id": 0,
+    "name": "John Smith",
+    "email": "john.smith@mailinator.com",
+    "phoneNumber": "2125551212",
+    "address": "Boston NY"
+  },
+  {
+    "id": 1,
+    "name": "Madhumita Sadhukhan",
+    "email": "msadhukh@gmail.com",
+    "phoneNumber": "2135551214",
+    "address": "Brno CZ"
+  }
+]
+
+* Member par id
+GET http://localhost:8080/jboss-hibernate4/api/members/{ID}
+{
+  "id": 0,
+  "name": "John Smith",
+  "email": "john.smith@mailinator.com",
+  "phoneNumber": "2125551212",
+  "address": "Boston NY"
+}
+
+* Creation d'un nouveau member :
+POST http://localhost:8080/jboss-hibernate4/api/members
+{
+  "id": 5,
+  "name": "test json",
+  "email": "test.json@gmail.com",
+  "phoneNumber": "2136651214",
+  "address": "TOTO"
+}
+
+* Sauvegarde d'un member
+PUT http://localhost:8080/jboss-hibernate4/api/members
+{
+"id": 5,
+  "name": "test json",
+  "email": "test.json@gmail.com",
+  "phoneNumber": "2136651214",
+  "address": "TITI"
+}
+
+* Supression d'un member
+DELETE http://localhost:8080/jboss-hibernate4/api/members/{ID}
