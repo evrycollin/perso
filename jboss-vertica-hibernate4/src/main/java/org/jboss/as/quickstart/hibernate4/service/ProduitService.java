@@ -3,7 +3,6 @@ package org.jboss.as.quickstart.hibernate4.service;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -21,19 +20,14 @@ public class ProduitService {
     @Inject
     private EntityManager em;
 
-    @Inject
-    private Event<Produit> produitEventSrc;
-
     public Produit create(Produit produit) throws Exception {
 	Session session = (Session) em.getDelegate();
 	session.persist(produit);
-	produitEventSrc.fire(produit);
 	return produit;
     }
 
     public boolean save(Produit produit) {
 	produitRepository.save(produit);
-	produitEventSrc.fire(produit);
 	return true;
     }
 
