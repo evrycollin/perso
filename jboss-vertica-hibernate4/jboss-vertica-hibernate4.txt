@@ -8,34 +8,51 @@ pour le faire fonctionner il a fallu :
 - reprendre le dialect hibernate pour vertica proposé par l'equipe HP ici : https://github.com/hibernate/hibernate-orm/pull/866
 cf https://hibernate.atlassian.net/browse/HHH-9560
 
-ici classe org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7
+ici classe org.jboss.as.quickstart.hibernate4.util.vertrica.VerticaDialect7
 
 pour utiliser ce dialiect, définir dans src\main\resources\META-INF\persistence.xml :
 <property name="hibernate.dialect" value="org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7"/>
 
+* configuration du datasource :
 
-- configurer la source de données pour vertica dans src\main\webapp\WEB-INF\hibernate4-quickstart-ds.xml
+- déposer le driver jdbc dans le dossier standalone/deployments de jboss ( ici vertica-jdbc-7.1.1-0.jar )
+- dans la console d'admin, creer un nouveau pool de connections :
+Name: vertica-ds
+JNDI: java:jboss/vertica-ds
+Is enabled?: true
+Statistics enabled?: false
+Datasource Class: 
 
-	<datasource jndi-name="java:jboss/datasources/Hibernate4QuickstartDS" pool-name="hibernate4-quickstart" enabled="true" use-java-context="true">
-		<connection-url>jdbc:vertica://192.168.1.19:5433/tst1</connection-url>
-		<driver-class>com.vertica.jdbc.Driver</driver-class>
-		<driver>vertica-jdbc-7.1.1-0.jar</driver>
-		<security>
-			<user-name>dbadmin</user-name>
-			<password>tst1</password>
-		</security>
-		<validation>
-			<validate-on-match>false</validate-on-match>
-			<background-validation>false</background-validation>
-		</validation>
-	</datasource>
+vertica-jdbc-7.1.1-0.jar
+Driver Class:
+com.vertica.jdbc.Driver
+Share Prepared Statements:
+false
+Statement Cache Size:
+0
 
-et déposer le driver jdbc dans le dossier standalone/deployments de jboss ( ici vertica-jdbc-7.1.1-0.jar )
+###- configurer la source de données pour vertica dans src\main\webapp\WEB-INF\hibernate4-quickstart-ds.xml
+###
+###	<datasource jndi-name="java:jboss/datasources/Hibernate4QuickstartDS" pool-name="hibernate4-quickstart" enabled="true" use-java-context="true">
+###		<connection-url>jdbc:vertica://192.168.1.19:5433/tst1</connection-url>
+###		<driver-class>com.vertica.jdbc.Driver</driver-class>
+###		<driver>vertica-jdbc-7.1.1-0.jar</driver>
+###		<security>
+###			<user-name>dbadmin</user-name>
+###			<password>tst1</password>
+###		</security>
+###		<validation>
+###			<validate-on-match>false</validate-on-match>
+###			<background-validation>false</background-validation>
+###		</validation>
+###	</datasource>
+###
+###et déposer le driver jdbc dans le dossier standalone/deployments de jboss ( ici vertica-jdbc-7.1.1-0.jar )
 
 Ajout d'une API Rest pour l'entité member ( org.jboss.as.quickstart.hibernate4.web.MemberResource ):
-
+jboss-vertica-hibernate4
 * Tous les members
-GET http://localhost:8080/jboss-hibernate4/api/members  :  findAllOrderedByName
+GET http://localhost:8080/jboss-vertica-hibernate4/api/members  :  findAllOrderedByName
 [
   {
     "id": 0,
@@ -54,7 +71,7 @@ GET http://localhost:8080/jboss-hibernate4/api/members  :  findAllOrderedByName
 ]
 
 * Member par id
-GET http://localhost:8080/jboss-hibernate4/api/members/{ID}
+GET http://localhost:8080/jboss-vertica-hibernate4/api/members/{ID}
 {
   "id": 0,
   "name": "John Smith",
@@ -64,7 +81,7 @@ GET http://localhost:8080/jboss-hibernate4/api/members/{ID}
 }
 
 * Creation d'un nouveau member :
-POST http://localhost:8080/jboss-hibernate4/api/members
+POST http://localhost:8080/jboss-vertica-hibernate4/api/members
 {
   "id": 5,
   "name": "test json",
@@ -74,7 +91,7 @@ POST http://localhost:8080/jboss-hibernate4/api/members
 }
 
 * Sauvegarde d'un member
-PUT http://localhost:8080/jboss-hibernate4/api/members
+PUT http://localhost:8080/jboss-vertica-hibernate4/api/members
 {
 "id": 5,
   "name": "test json",
@@ -84,4 +101,4 @@ PUT http://localhost:8080/jboss-hibernate4/api/members
 }
 
 * Supression d'un member
-DELETE http://localhost:8080/jboss-hibernate4/api/members/{ID}
+DELETE http://localhost:8080/jboss-vertica-hibernate4/api/members/{ID}

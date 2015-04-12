@@ -26,7 +26,7 @@
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.dialect"
-				value="org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7" />
+				value="org.jboss.as.quickstart.hibernate4.util.vertica.VerticaDialect7" />
 			<property name="hibernate.generate_statistics" value="true" />
 
 		</properties>

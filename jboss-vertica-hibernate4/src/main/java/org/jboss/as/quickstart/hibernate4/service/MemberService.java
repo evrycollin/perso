@@ -16,8 +16,8 @@
  */
 package org.jboss.as.quickstart.hibernate4.service;
 
-import org.jboss.as.quickstart.hibernate4.data.MemberRepository;
 import org.jboss.as.quickstart.hibernate4.model.Member;
+import org.jboss.as.quickstart.hibernate4.repository.MemberRepository;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;

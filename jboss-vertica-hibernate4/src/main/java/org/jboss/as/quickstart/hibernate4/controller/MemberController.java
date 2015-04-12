@@ -24,8 +24,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.as.quickstart.hibernate4.data.MemberRepository;
 import org.jboss.as.quickstart.hibernate4.model.Member;
+import org.jboss.as.quickstart.hibernate4.repository.MemberRepository;
 import org.jboss.as.quickstart.hibernate4.service.MemberService;
 
 // The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an

@@ -1,4 +1,4 @@
-package org.jboss.as.quickstart.hibernate4.vertrica;
+package org.jboss.as.quickstart.hibernate4.util.vertica;
 
 /*
  * Hibernate, Relational Persistence for Idiomatic Java
