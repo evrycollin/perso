@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+	<!-- The datasource is bound into JNDI at this location. We reference this 
+		in META-INF/persistence.xml -->
+	<datasource jndi-name="java:jboss/datasources/Hibernate4QuickstartDS"
+		pool-name="hibernate4-quickstart" enabled="true" use-java-context="true">
+		<connection-url>jdbc:vertica://192.168.1.19:5433/tst1</connection-url>
+		<driver-class>com.vertica.jdbc.Driver</driver-class>
+		<driver>vertica-jdbc-7.1.1-0.jar</driver>
+		<security>
+			<user-name>dbadmin</user-name>
+			<password>tst1</password>
+		</security>
+		<validation>
+			<validate-on-match>false</validate-on-match>
+			<background-validation>false</background-validation>
+		</validation>
+	</datasource>
+</datasources>
+ 

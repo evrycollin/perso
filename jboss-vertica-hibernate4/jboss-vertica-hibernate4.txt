@@ -1,0 +1,32 @@
+
+
+l'exemple va créer une table MemberHibernate4Demo 
+et propose un formulaire d'édition a l'adresse http://localhost:8080/jboss-hibernate4
+
+pour le faire fonctionner il a fallu :
+
+- reprendre le dialect hibernate pour vertica proposé par l'equipe HP ici : https://github.com/hibernate/hibernate-orm/pull/866
+cf https://hibernate.atlassian.net/browse/HHH-9560
+
+ici classe org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7
+
+pour utiliser ce dialiect, définir dans src\main\resources\META-INF\persistence.xml :
+<property name="hibernate.dialect" value="org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7"/>
+
+- configurer la source de données pour vertica dans src\main\webapp\WEB-INF\hibernate4-quickstart-ds.xml
+
+	<datasource jndi-name="java:jboss/datasources/Hibernate4QuickstartDS" pool-name="hibernate4-quickstart" enabled="true" use-java-context="true">
+		<connection-url>jdbc:vertica://192.168.1.19:5433/tst1</connection-url>
+		<driver-class>com.vertica.jdbc.Driver</driver-class>
+		<driver>vertica-jdbc-7.1.1-0.jar</driver>
+		<security>
+			<user-name>dbadmin</user-name>
+			<password>tst1</password>
+		</security>
+		<validation>
+			<validate-on-match>false</validate-on-match>
+			<background-validation>false</background-validation>
+		</validation>
+	</datasource>
+
+et déposer le driver jdbc dans le dossier standalone/deployments de jboss ( ici vertica-jdbc-7.1.1-0.jar )

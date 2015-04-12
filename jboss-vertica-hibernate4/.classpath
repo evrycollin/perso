@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**/*.java" including="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="var" path="M2_REPO/javax/enterprise/cdi-api/1.0-SP4-redhat-4/cdi-api-1.0-SP4-redhat-4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1.redhat-4/javax.inject-1.redhat-4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.0.0.GA-redhat-2/validation-api-1.0.0.GA-redhat-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.7.redhat-4/antlr-2.7.7.redhat-4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1.redhat-6/dom4j-1.6.1.redhat-6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/common/hibernate-commons-annotations/4.0.1.Final-redhat-2/hibernate-commons-annotations-4.0.1.Final-redhat-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-core/4.2.14.SP1-redhat-1/hibernate-core-4.2.14.SP1-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final-redhat-2/hibernate-jpa-2.0-api-1.0.1.Final-redhat-2.jar" sourcepath="C:/Users/ecollin/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final-redhat-2/hibernate-jpa-2.0-api-1.0.1.Final-redhat-2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/4.3.1.Final-redhat-1/hibernate-validator-4.3.1.Final-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.18.1-GA-redhat-1/javassist-3.18.1-GA-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/annotation/jboss-annotations-api_1.1_spec/1.0.1.Final-redhat-2/jboss-annotations-api_1.1_spec-1.0.1.Final-redhat-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/ejb/jboss-ejb-api_3.1_spec/1.0.2.Final-redhat-2/jboss-ejb-api_3.1_spec-1.0.2.Final-redhat-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.1_spec/1.0.1.Final-redhat-2/jboss-interceptors-api_1.1_spec-1.0.1.Final-redhat-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/ws/rs/jboss-jaxrs-api_1.1_spec/1.0.1.Final-redhat-2/jboss-jaxrs-api_1.1_spec-1.0.1.Final-redhat-2.jar" sourcepath="M2_REPO/org/jboss/spec/javax/ws/rs/jboss-jaxrs-api_1.1_spec/1.0.1.Final-redhat-2/jboss-jaxrs-api_1.1_spec-1.0.1.Final-redhat-2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/faces/jboss-jsf-api_2.1_spec/2.1.28.Final-redhat-1/jboss-jsf-api_2.1_spec-2.1.28.Final-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.1.4.GA-redhat-1/jboss-logging-3.1.4.GA-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/transaction/jboss-transaction-api_1.1_spec/1.0.1.Final-redhat-2/jboss-transaction-api_1.1_spec-1.0.1.Final-redhat-2.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="target/generated-sources/annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
