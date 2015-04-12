@@ -18,3 +18,17 @@
 -- You can use this file to load seed data into the database using SQL statements
 insert into MemberHibernate4Demo (id, name, email, phone_number, address) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212', 'Boston NY') 
 insert into MemberHibernate4Demo (id, name, email, phone_number, address) values (1, 'Madhumita Sadhukhan', 'msadhukh@gmail.com', '2135551214', 'Brno CZ') 
+
+insert into T_TYPEPRODUIT (id, code,description) values (1, 'generic','produit generic')
+
+insert into T_PRODUIT (id, code, typeProduit_id ) values ( 1, 'prd-1', 1 )
+insert into T_PRODUIT (id, code, typeProduit_id ) values ( 2, 'prd-2', 1 )
+
+insert into T_COMMANDE (id) values (1)
+insert into T_COMMANDE_LIGNE (id, commande_id, produit_id, quantity) values (1,1,1,10)
+insert into T_COMMANDE_LIGNE (id, commande_id, produit_id, quantity) values (2,1,2,2)
+insert into T_COMMANDE_LIGNE (id, commande_id, produit_id, quantity) values (3,1,2,3)
+
+insert into T_COMMANDE (id) values (2)
+insert into T_COMMANDE_LIGNE (id, commande_id, produit_id, quantity) values (4,2,2,7)
+
