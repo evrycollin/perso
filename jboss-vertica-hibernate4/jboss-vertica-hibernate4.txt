@@ -13,6 +13,7 @@ ici classe org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7
 pour utiliser ce dialiect, définir dans src\main\resources\META-INF\persistence.xml :
 <property name="hibernate.dialect" value="org.jboss.as.quickstart.hibernate4.vertrica.VerticaDialect7"/>
 
+
 - configurer la source de données pour vertica dans src\main\webapp\WEB-INF\hibernate4-quickstart-ds.xml
 
 	<datasource jndi-name="java:jboss/datasources/Hibernate4QuickstartDS" pool-name="hibernate4-quickstart" enabled="true" use-java-context="true">

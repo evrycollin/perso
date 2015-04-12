@@ -16,6 +16,8 @@
  */
 package org.jboss.as.quickstart.hibernate4.web;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,7 +40,7 @@ public class MemberResource {
 
     @GET
     @Produces({ "application/json" })
-    public Object members() {
+    public List<Member> members() {
 	return memberRegistration.findAllOrderedByName();
 
     }
@@ -61,9 +63,9 @@ public class MemberResource {
     @POST
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    public Member register(Member member) throws Exception {
+    public boolean register(Member member) throws Exception {
 	memberRegistration.register(member);
-	return member;
+	return true;
     }
 
     @PUT
