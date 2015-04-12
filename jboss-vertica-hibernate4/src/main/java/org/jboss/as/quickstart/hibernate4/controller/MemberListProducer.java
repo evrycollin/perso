@@ -26,7 +26,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.as.quickstart.hibernate4.model.Member;
+import org.jboss.as.quickstart.hibernate4.domain.Member;
 import org.jboss.as.quickstart.hibernate4.repository.MemberRepository;
 
 /**

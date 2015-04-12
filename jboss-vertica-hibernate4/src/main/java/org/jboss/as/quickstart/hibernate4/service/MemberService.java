@@ -16,7 +16,7 @@
  */
 package org.jboss.as.quickstart.hibernate4.service;
 
-import org.jboss.as.quickstart.hibernate4.model.Member;
+import org.jboss.as.quickstart.hibernate4.domain.Member;
 import org.jboss.as.quickstart.hibernate4.repository.MemberRepository;
 
 import javax.ejb.Stateless;

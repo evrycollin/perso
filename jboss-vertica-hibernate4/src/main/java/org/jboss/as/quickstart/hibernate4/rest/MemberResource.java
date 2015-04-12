@@ -28,7 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.jboss.as.quickstart.hibernate4.model.Member;
+import org.jboss.as.quickstart.hibernate4.domain.Member;
 import org.jboss.as.quickstart.hibernate4.service.MemberService;
 
 @Path("/members")
