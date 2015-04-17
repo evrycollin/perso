@@ -13,7 +13,7 @@
 	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.7.redhat-4/antlr-2.7.7.redhat-4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1.redhat-6/dom4j-1.6.1.redhat-6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/common/hibernate-commons-annotations/4.0.1.Final-redhat-2/hibernate-commons-annotations-4.0.1.Final-redhat-2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-core/4.2.14.SP1-redhat-1/hibernate-core-4.2.14.SP1-redhat-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-core/4.2.14.SP1-redhat-1/hibernate-core-4.2.14.SP1-redhat-1.jar" sourcepath="C:/Users/ecollin/.m2/repository/org/hibernate/hibernate-core/4.2.14.SP1-redhat-1/hibernate-core-4.2.14.SP1-redhat-1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final-redhat-2/hibernate-jpa-2.0-api-1.0.1.Final-redhat-2.jar" sourcepath="C:/Users/ecollin/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final-redhat-2/hibernate-jpa-2.0-api-1.0.1.Final-redhat-2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/4.3.1.Final-redhat-1/hibernate-validator-4.3.1.Final-redhat-1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.18.1-GA-redhat-1/javassist-3.18.1-GA-redhat-1.jar"/>

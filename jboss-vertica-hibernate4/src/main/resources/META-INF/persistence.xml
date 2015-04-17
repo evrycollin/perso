@@ -28,7 +28,7 @@
 			<property name="hibernate.dialect"
 				value="org.jboss.as.quickstart.hibernate4.util.vertica.VerticaDialect7" />
 			<property name="hibernate.generate_statistics" value="true" />
-
+			<property name="show_sql" value="true"/>
 		</properties>
 	</persistence-unit>
 </persistence>
