@@ -1,0 +1,373 @@
+<html ng-app="test-app">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>AngularJS Task Manager</title>
+<link href='./css/style.css' rel="stylesheet" type="text/css" />
+<link href='./css/css/font-awesome.css' rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans'
+	rel='stylesheet' type='text/css' />
+
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script data-require="angular.js@*" data-semver="1.3.1"
+	src="http://code.angularjs.org/1.3.1/angular.js"></script>
+<script data-require="angular-animate@*" data-semver="1.3.1"
+	src="http://code.angularjs.org/1.3.1/angular-animate.js"></script>
+
+<script
+	src="http://cdn.jsdelivr.net/underscorejs/1.5.1/underscore-min.js"></script>
+
+<script
+	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript"
+	src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js"></script>
+
+<script type="text/javascript"
+	src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
+
+<script type="text/javascript" src="./js/test.js"></script>
+
+</head>
+<body  ng-controller="TestCtrl">
+
+	<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static"
+		data-keyboard="false">
+		<div class="modal-header">
+			<h1>Processing...</h1>
+		</div>
+		<div class="modal-body">
+			<div class="progress progress-striped active">
+				<div class="bar" style="width: 100%;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="confimrDeleteModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="deleteForm" ng-submit="confirmedDelete()">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Confirm delete operation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{confirmDeleteMessage}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="canceledDelete()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span>Delete</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editTaskModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editTaskForm" ng-submit="createOrUpdateTask()">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Task editor</h4>
+                    </div>
+                    <div class="modal-body">
+					    <div class="form-group">
+					      <label for="name">Task name :</label>
+					      <input id="name" type="text" class="form-control"  ng-model="task.taskName" />
+					    </div>
+					    <div class="form-group">
+					      <label for="desc">Description :</label>
+					      <input id="desc" type="text" class="form-control" ng-model="task.taskDescription"/>
+					    </div>
+					    <div class="form-group">
+					      <label for="priority">Priority :</label>
+					      <select id="priority" class="form-control" ng-model="task.taskPriority">
+					      	<option value="HIGH" >High</option>
+					      	<option value="MEDIUM"    >Medium</option>
+					      	<option value="LOW"    >Low</option>
+					      </select>
+					    </div>
+					    <div class="form-group">
+					      <label for="status">Status :</label>
+					      <select id="status" class="form-control" ng-model="task.taskStatus">
+					      	<option value="ACTIVE"    >Active</option>
+					      	<option value="COMPLETED" >Completed</option>
+					      </select>
+					    </div>
+					    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editEventModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editEventForm" ng-submit="createOrUpdateEvent()">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Event editor</h4>
+                    </div>
+                    <div class="modal-body">
+					    <div class="form-group">
+					      <label for="desc">Description :</label>
+					      <input id="desc" type="text" class="form-control" ng-model="event.description"/>
+					    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editLocationModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editEventForm" ng-submit="createOrUpdateLocation()">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Location editor</h4>
+                    </div>
+                    <div class="modal-body">
+					    <div class="form-group">
+					      <label for="loc">Location :</label>
+					      <input id="loc" type="text" class="form-control" ng-model="location.location"/>
+					    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+	<div class="container">
+		<hr/>
+		<h4>Connected user : </h4>
+		<table class="table">
+		<tbody>
+			<tr>
+				<td width="150px">ID : </td>
+				<td>{{user.id}}</td>
+			</tr>
+			<tr>
+				<td width="150px">Login : </td>
+				<td>{{user.login}}</td>
+			</tr>
+			<tr>
+				<td>FirstName :</td>
+				<td>{{user.firstname}}</td>
+			</tr>
+			<tr>
+				<td>Address :</td>
+				<td>{{address.address}}</td>
+			</tr>
+		</tbody>
+		</table>
+		<hr/>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="row"> 
+					<div class="col-md-8">
+						<h4>Tasks : </h4>
+					</div>
+					<div class="col-md-4">
+						<button class="btn pull-right" ng-click="reloadTasks()">
+							<span class="glyphicon glyphicon-refresh"></span>					
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body" ng-show="tasks.length == 0">
+				No task found. create new one... 
+				<button class="btn btn-default" ng-click="createTask()">
+					<span class="glyphicon glyphicon-plus"></span>  					
+				</button>				
+			</div>
+			<div class="panel-body" ng-show="tasks.length > 0">
+				<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>
+							<button class="btn btn-default" ng-click="createTask()">
+								<span class="glyphicon glyphicon-plus"></span>  					
+							</button>
+						</th>
+						<th>Id</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Priority</th>
+						<th>Status</th>
+						<th>Archived</th>
+						<th></th>					
+					</tr>		
+				</thead>
+				<tbody>
+					<tr ng-repeat="t in tasks | orderBy:'taskName'" ng-class="{active: t.id==task.id}">
+						<td>
+							<button class="btn btn-default" ng-click="editTask(t)">
+								<span class="glyphicon glyphicon-edit"></span>					
+							</button>
+							<button class="btn btn-danger" ng-click="deleteTask(t)">
+								<span class="glyphicon glyphicon-remove"></span>					
+							</button>
+						</td>
+						<td><span class="glyphicon glyphicon-th-list"></span> <small>{{t.id}}</small></td>
+						<td>{{t.taskName}}</td>
+						<td>{{t.taskDescription}}</td>				
+						<td>{{t.taskPriority}}</td>
+						<td>{{t.taskStatus}}</td>
+						<td>{{t.taskArchived}}</td>
+						<td> 
+							<button class="btn btn-info pull-right" ng-click="viewEvents(t)">
+								<span class="glyphicon glyphicon-tag"></span> events					
+							</button>
+						</td>							
+					</tr>		
+				</tbody>		
+				</table>
+			</div>
+		</div>
+		<div ng-show="events" class="panel panel-default">
+			<div class="panel-heading" > 
+				<div class="row"> 
+					<div class="col-md-8">
+						<h4>Events for : {{task.taskName}} {{task.taskDescription}} </h4>
+					</div>
+					<div class="col-md-4">
+						<button class="btn pull-right" ng-click="closeEvents()">
+							<span class="glyphicon glyphicon-remove"></span>					
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body" ng-show="events.length == 0">
+				No event found for this task. Create a new one...
+				<button class="btn btn-default" ng-click="createEvent()">
+					<span class="glyphicon glyphicon-plus"></span>					
+				</button>
+			</div>				
+			<div class="panel-body" ng-show="events.length > 0">	
+				<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>
+							<button class="btn btn-default" ng-click="createEvent()">
+								<span class="glyphicon glyphicon-plus"></span>					
+							</button>
+						</th>
+						<th>Id</th>
+						<th>Description</th>
+						<th></th>
+					</tr>
+				</thead>			
+				<tbody>
+					<tr ng-repeat="evt in events | orderBy:'id'" ng-class="{active: evt.id==event.id}">
+						<td>
+							<button class="btn btn-default" ng-click="editEvent(evt)">
+								<span class="glyphicon glyphicon-edit"></span>					
+							</button>
+							<button class="btn btn-danger" ng-click="deleteEvent(evt)">
+								<span class="glyphicon glyphicon-remove"></span>					
+							</button>
+						</td>
+						<td><span class="glyphicon glyphicon-tag"></span> <small>{{evt.id}}</small></td>
+						<td>{{evt.description}}</td>
+						<td>
+							<button class="btn btn-info pull-right" ng-click="viewLocations(evt)">
+								<span class="glyphicon glyphicon-road"></span> locations					
+							</button>
+						</td>
+					</tr>
+				</tbody>			
+				</table>
+			</div>
+		</div>
+	
+
+		<div ng-show="locations" class="panel panel-default">
+			<div class="panel-heading" > 
+				<div class="row">
+					<div class="col-md-8">
+						<h4>Locations</h4>
+					</div>
+					<div class="col-md-4">
+						<button class="btn pull-right" ng-click="closeLocations()">
+							<span class="glyphicon glyphicon-remove"></span>					
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body" ng-show="locations.length==0">
+				No locations found. Create new one...
+				<button class="btn btn-default" ng-click="createLocation()">
+					<span class="glyphicon glyphicon-plus"></span>					
+				</button>
+			</div>
+			<div class="panel-body" ng-show="locations.length>0">
+				<table class="table">
+				<thead>
+					<tr>
+						<th>
+							<button class="btn btn-default" ng-click="createLocation()">
+								<span class="glyphicon glyphicon-plus"></span>					
+							</button>
+						</th>
+						<th>Id</th>
+						<th>Location</th>
+					</tr>
+				</thead>			
+				<tbody>
+					<tr ng-repeat="loc in locations | orderBy:'id'">
+						<td>
+							<button class="btn btn-default" ng-click="editLocation(loc)">
+								<span class="glyphicon glyphicon-edit"></span>					
+							</button>
+							<button class="btn btn-danger" ng-click="deleteLocation(loc)">
+								<span class="glyphicon glyphicon-remove"></span>					
+							</button>
+						</td>
+						<td><span class="glyphicon glyphicon-road"></span> <small>{{loc.id}}</small></td>
+						<td>{{loc.location}}</td>
+					</tr>
+				</tbody>			
+				</table>
+			</div>						
+		</div>
+	</div>
+
+
+
+</body>
+</html>

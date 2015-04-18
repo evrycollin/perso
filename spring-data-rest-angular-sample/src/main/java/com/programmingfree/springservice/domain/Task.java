@@ -48,11 +48,11 @@ public class Task {
 	this.events = events;
     }
 
-    public int getTaskId() {
+    public int getId() {
 	return id;
     }
 
-    public void setTaskId(int taskId) {
+    public void setId(int taskId) {
 	this.id = taskId;
     }
 
@@ -88,12 +88,12 @@ public class Task {
 	this.taskStatus = taskStatus;
     }
 
-    public int isTaskArchived() {
-	return taskArchived;
+    public boolean getTaskArchived() {
+	return taskArchived==1;
     }
 
-    public void setTaskArchived(int taskArchived) {
-	this.taskArchived = taskArchived;
+    public void setTaskArchived(boolean taskArchived) {
+	this.taskArchived = taskArchived?1:0;
     }
 
     @Override
