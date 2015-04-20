@@ -14,4 +14,6 @@ public interface FastCoreService {
 
     String doDelete(EntityManager entityManager, JpaModel jpaModel, FastRestRequest restReq);
 
+    EntityManager getEntityManager();
+
 }

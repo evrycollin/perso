@@ -1,5 +1,6 @@
 package com.fastrest.core.config;
 
+import com.fastrest.core.model.JpaModel;
 import com.fastrest.core.util.Json;
 
 public class Config {
@@ -7,8 +8,28 @@ public class Config {
     String baseUrl;
 
     Double version;
+    
+    boolean cypherIds = false;
 
-    EntityManagerProvider entityManagerProvider;
+    ServiceLocator serviceLocator;
+    
+    JpaModel jpaModel;
+
+    public JpaModel getJpaModel() {
+	return jpaModel;
+    }
+    public void setJpaModel(JpaModel jpaModel) {
+	this.jpaModel = jpaModel;
+    }
+    
+
+    public boolean isCypherIds() {
+        return cypherIds;
+    }
+
+    public void setCypherIds(boolean cypherIds) {
+        this.cypherIds = cypherIds;
+    }
 
     public String getBaseUrl() {
 	return baseUrl;
@@ -26,14 +47,10 @@ public class Config {
 	this.version = version;
     }
 
-    public EntityManagerProvider getEntityManagerProvider() {
-	return entityManagerProvider;
+    public ServiceLocator getServiceLocator() {
+	return serviceLocator;
     }
-
-    public void setEntityManagerProvider(
-	    EntityManagerProvider entityManagerProvider) {
-	this.entityManagerProvider = entityManagerProvider;
-    }
+    
 
 //    public static void main(String[] args) {
 //

@@ -10,6 +10,7 @@
   <modules>
     <module>fast-rest-core</module>
     <module>fast-rest-spring</module>
+    <module>fast-rest-j2ee</module>
   
   </modules>
 </project>

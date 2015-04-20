@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.util.logging.Logger;
 
 import com.fastrest.core.FastRestRequest;
-import com.fastrest.core.config.EntityManagerProvider;
+import com.fastrest.core.config.ServiceLocator;
 import com.fastrest.core.model.CollectionAttribute;
 import com.fastrest.core.model.Entity;
 import com.fastrest.core.model.EntityAttribute;
@@ -33,7 +33,7 @@ public class Json {
     static {
 	GsonBuilder.setPrettyPrinting();
 	GsonBuilder.registerTypeAdapter(Class.class, new ClassGsonAdapter());
-	GsonBuilder.registerTypeAdapter(EntityManagerProvider.class,
+	GsonBuilder.registerTypeAdapter(ServiceLocator.class,
 		new GsonObjectAdapter());
     }
 

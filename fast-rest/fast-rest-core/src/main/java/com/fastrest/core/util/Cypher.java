@@ -1,7 +1,5 @@
 package com.fastrest.core.util;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -14,11 +12,16 @@ import org.apache.commons.codec.binary.Base64;
 
 public class Cypher {
 
-    static boolean crypt = true;
+    private static boolean idCypher = true;
+    
+    public static void setIdCyphering(boolean cypher) {
+	idCypher=cypher;
+	
+    }
 
     public static Object maskId(Principal principal, Class<?> type, Object id) {
 	try {
-	    return crypt ? encrypt((principal != null ? principal.getName()
+	    return idCypher ? encrypt((principal != null ? principal.getName()
 		    : "ANONYMOUS") + "_" + type.getSimpleName() + "_" + id)
 		    : id;
 	} catch (Throwable th) {
@@ -27,7 +30,7 @@ public class Cypher {
     }
 
     public static String unmaskId(String type, String encryptedId) {
-	if (!crypt) {
+	if (!idCypher) {
 	    return encryptedId;
 	}
 	try {

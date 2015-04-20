@@ -1,6 +1,7 @@
 package com.fastrest.core;
 
 import static com.fastrest.core.util.Json.fromJson;
+import static com.fastrest.core.util.Json.toJson;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManager;
 import com.fastrest.core.config.Config;
 import com.fastrest.core.model.Entity;
 import com.fastrest.core.model.JpaModel;
+import com.fastrest.core.util.Cypher;
 import com.fastrest.core.util.Json;
 
 public class FastRestCore {
@@ -32,25 +34,29 @@ public class FastRestCore {
     private void loadConfig(Config config) {
 	this.currentConfig = config;
 
-	this.entityManager = currentConfig.getEntityManagerProvider()
-		.getEntityManager();
+	Cypher.setIdCyphering(config.isCypherIds());
+
+	this.entityManager = currentConfig.getServiceLocator().getService().getEntityManager();
+	
 	// load JpaModel
 	this.jpaModel = new JpaModel(this.entityManager);
 	
-	for( Entity entity : jpaModel.getEntities() ) {
-	    Json.GsonBuilder.registerTypeAdapter(entity.getType(), new Json.EntityObjectAdapter(jpaModel) );
+	currentConfig.setJpaModel(jpaModel);
+
+	for (Entity entity : jpaModel.getEntities()) {
+	    Json.GsonBuilder.registerTypeAdapter(entity.getType(),
+		    new Json.EntityObjectAdapter(jpaModel));
 	}
 
-	logger.info("Loaded configuration : \n" + currentConfig);
-	logger.info("Loaded JpaModel : \n" + Json.toJson(jpaModel));
 	logger.info("Entity Manager : "
 		+ (this.entityManager != null ? entityManager.toString()
 			: "NULL"));
+	logger.info("Loaded configuration : \n" + currentConfig);
 
     }
-    
+
     FastCoreService getService() {
-	return currentConfig.getEntityManagerProvider().getService();
+	return currentConfig.getServiceLocator().getService();
     }
 
     public void initializeFromJson(String configJson) {
@@ -68,6 +74,7 @@ public class FastRestCore {
 	loadConfig(fromJson(new URL(configLocationUrl).openStream(),
 		Config.class));
     }
+
     public String doGet(FastRestRequest restReq) {
 	return getService().doGet(entityManager, jpaModel, restReq);
     }
@@ -84,6 +91,8 @@ public class FastRestCore {
 	return getService().doDelete(entityManager, jpaModel, restReq);
     }
 
-
+    public String getConfig() {	
+	return toJson(currentConfig);
+    }
 
 }

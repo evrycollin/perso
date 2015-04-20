@@ -44,8 +44,9 @@ public class FastRestServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
+	
 	FastRestRequest restReq = new FastRestRequest(request);
-	response.getWriter().write(FastRestCore.Instance.doGet(restReq));
+	response.getWriter().write( request.getRequestURI().endsWith("/config") ? FastRestCore.Instance.getConfig() : FastRestCore.Instance.doGet(restReq));
 	response.getWriter().close();
     }
 
