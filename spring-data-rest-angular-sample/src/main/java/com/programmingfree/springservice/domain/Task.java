@@ -16,8 +16,8 @@ import javax.persistence.Table;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column
     private String taskName;
@@ -32,7 +32,7 @@ public class Task {
     private String taskStatus;
 
     @Column
-    private int taskArchived = 0;
+    private Boolean taskArchived;
 
     @OneToMany(mappedBy = "task")
     Set<TaskEvent> events;
@@ -48,11 +48,11 @@ public class Task {
 	this.events = events;
     }
 
-    public int getId() {
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(int taskId) {
+    public void setId(Integer taskId) {
 	this.id = taskId;
     }
 
@@ -88,12 +88,12 @@ public class Task {
 	this.taskStatus = taskStatus;
     }
 
-    public boolean getTaskArchived() {
-	return taskArchived==1;
+    public Boolean getTaskArchived() {
+	return taskArchived;
     }
 
-    public void setTaskArchived(boolean taskArchived) {
-	this.taskArchived = taskArchived?1:0;
+    public void setTaskArchived(Boolean taskArchived) {
+	this.taskArchived = taskArchived;
     }
 
     @Override

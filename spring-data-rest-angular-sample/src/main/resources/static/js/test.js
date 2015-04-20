@@ -3,6 +3,7 @@ var app = angular.module('test-app', [ 'restangular','ngAnimate' ]);
 app.controller('TestCtrl', function($scope, Restangular ) {
 
 	$scope.user={};
+	$scope.groups=[];
 	$scope.address={};
 	$scope.task;
 	$scope.tasks;
@@ -14,6 +15,7 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 	$scope.confirmDeleteMessage=null;
 	$scope.entityToDelete=null;
 	$scope.entityDeleted=false;
+	$scope.deleteRefresh=null;
 
 	$scope.reloadTasks = function() { 
 		$scope.task=null;
@@ -23,17 +25,25 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$scope.location=null;
 		$scope.locations=null;
 		// load user
-		var api = Restangular.one('login', 2);
+		var api = Restangular.one('../login', 2);
+		
 		api.get().then( function(user) {		
-			$scope.user = user;
-			// load user tasks
-			$scope.user.getList('tasks').then( function(tasks) {
-				$scope.tasks = tasks;
-			} );
-			// load user address		
-			user.oneUrl('address', user.address._self.link).get().then( function(address) {
-				$scope.address = address;			
-			} );						
+			Restangular.one('User', user.id ).get().then( function(user) {
+				$scope.user = user;
+				
+				// load user tasks
+				$scope.user.getList('tasks').then( function(tasks) {
+					$scope.tasks = tasks;
+				} );
+				$scope.user.getList('groups').then( function(groups) {
+					$scope.groups = groups;
+				} );				
+				// load user address		
+				user.oneUrl('address', user.address._link).get().then( function(address) {
+					$scope.address = address;			
+				} );				
+			});
+			
 		});	
 	}
 
@@ -41,15 +51,22 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 	
 	$scope.confirmedDelete = function() {
 		$scope.entityDeleted=false;
-		$scope.entityToDelete.remove();
-		$scope.entityDeleted=true;
-		$scope.entityToDelete=null;
-		$scope.confirmDeleteMessage=null;
+		$scope.entityToDelete.remove().then( function() {
+			$scope.entityDeleted=true;
+			$scope.entityToDelete=null;
+			$scope.confirmDeleteMessage=null;
+			if( $scope.deleteRefresh ) {
+				$scope.deleteRefresh();
+			}
+			$scope.deleteRefresh=null;
+			$('#confimrDeleteModal').modal('hide');
+		} );
 	}
 	$scope.canceledDelete = function() {
 		$scope.entityDeleted=false;
 		$scope.entityToDelete=null;
 		$scope.confirmDeleteMessage=null;
+		$('#confimrDeleteModal').modal('hide');
 	}
 	
 	
@@ -57,26 +74,31 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$scope.confirmDeleteMessage='Are you shure you want to delete task '+task.taskName+' ?';
 		$scope.entityToDelete = task;
 		$scope.entityDeleted = false;
-		$('#confimrDeleteModal').modal('show');
-		if($scope.entityDeleted) {
+		$scope.deleteRefresh = function() {
 			$scope.reloadTasks();		
 		}
+		$('#confimrDeleteModal').modal('show');
 	}
 	$scope.editTask = function(task) {
 		$scope.task = Restangular.copy(task);
 		$('#editTaskModal').modal('show');
 	}
 	$scope.createTask = function(task) {
-		$scope.task = {};
+		$scope.task = { user: { id: $scope.user.id } };
 		$('#editTaskModal').modal('show');
 	}
 	$scope.createOrUpdateTask = function() {
 		if( $scope.task.id ) {
-			$scope.task.put();
+			$scope.task.put().then( function() {
+				$('#editTaskModal').modal('hide');		
+				$scope.reloadTasks();			
+			} );
 		} else {
-			$scope.user.post("tasks", $scope.task);
+			$scope.user.post("tasks", $scope.task).then( function() {
+				$('#editTaskModal').modal('hide');		
+				$scope.reloadTasks();			
+			} );
 		}
-		$scope.reloadTasks();		
 	}	
 	
 	$scope.saveTask= function(task) {
@@ -105,10 +127,10 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$scope.confirmDeleteMessage='Are you shure you want to delete event '+event.description+' ?';
 		$scope.entityToDelete = event;
 		$scope.entityDeleted = false;
-		$('#confimrDeleteModal').modal('show');
-		if($scope.entityDeleted) {
+		$scope.deleteRefresh = function() {
 			$scope.viewEvents($scope.task);			
 		}
+		$('#confimrDeleteModal').modal('show');
 	}
 	$scope.saveEvent = function(event) {
 		event.put().then( function() {			
@@ -120,16 +142,21 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$('#editEventModal').modal('show');
 	}
 	$scope.createEvent = function(event) {
-		$scope.event = {};
+		$scope.event = { task: { id: $scope.task.id} };
 		$('#editEventModal').modal('show');
 	}
 	$scope.createOrUpdateEvent = function() {
 		if( $scope.event.id ) {
-			$scope.event.put();
+			$scope.event.put().then( function() {
+				$('#editEventModal').modal('hide');		
+				$scope.viewEvents($scope.task);			
+			} );
 		} else {
-			$scope.task.post("events", $scope.event);
+			$scope.task.post("events", $scope.event).then( function() {
+				$('#editEventModal').modal('hide');		
+				$scope.viewEvents($scope.task);			
+			} );
 		}
-		$scope.viewEvents($scope.task);			
 	}	
 
 	$scope.viewLocations = function(event) {
@@ -146,10 +173,10 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$scope.confirmDeleteMessage='Are you shure you want to delete location '+location.location+' ?';
 		$scope.entityToDelete = location;
 		$scope.entityDeleted = false;
-		$('#confimrDeleteModal').modal('show');
-		if($scope.entityDeleted) {
+		$scope.deleteRefresh = function() {
 			$scope.viewLocations($scope.event);			
 		}
+		$('#confimrDeleteModal').modal('show');
 	}
 	$scope.saveLocation = function(location) {
 		location.put().then( function() {			
@@ -160,26 +187,36 @@ app.controller('TestCtrl', function($scope, Restangular ) {
 		$scope.location = Restangular.copy(location);
 		$('#editLocationModal').modal('show');
 	}
-	$scope.createLocation = function(location) {
-		$scope.location = {};
+	$scope.createLocation = function() {
+		$scope.location = {
+				"location" : "enter a location",
+				"event" : {
+					"id" : $scope.event.id
+				}
+		};
 		$('#editLocationModal').modal('show');
 	}
 	$scope.createOrUpdateLocation = function() {
 		if( $scope.location.id ) {
-			$scope.location.put();
+			$scope.location.put().then( function() {
+				$('#editLocationModal').modal('hide');
+				$scope.viewLocations($scope.event);			
+			});
 		} else {
-			$scope.event.post("locations", $scope.location);
+			$scope.event.post("locations", $scope.location).then( function() {
+				$('#editLocationModal').modal('hide');
+				$scope.viewLocations($scope.event);			
+			});
 		}
-		$scope.viewLocations($scope.event);			
 	}	
 
 });
 
 //Global configuration
 app.config(function(RestangularProvider) {
-	RestangularProvider.setBaseUrl('/generic');
+	RestangularProvider.setBaseUrl('/fastrest');
 	RestangularProvider.setRestangularFields({
-		  selfLink: '_self.link'
+		  selfLink: '_link'
 	});	
 	
 });

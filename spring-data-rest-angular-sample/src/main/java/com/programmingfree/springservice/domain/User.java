@@ -20,8 +20,8 @@ import javax.persistence.Table;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column
     private String login;
@@ -43,11 +43,11 @@ public class User {
 	    )
     private List<Group> groups;
 
-    public int getId() {
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
 	this.id = id;
     }
 

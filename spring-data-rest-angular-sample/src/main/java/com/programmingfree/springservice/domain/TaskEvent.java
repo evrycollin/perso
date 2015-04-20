@@ -16,8 +16,8 @@ import javax.persistence.Table;
 public class TaskEvent {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column
     private String description;
@@ -36,11 +36,11 @@ public class TaskEvent {
 	this.description = description;
     }
 
-    public int getId() {
+    public Integer getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
 	this.id = id;
     }
 

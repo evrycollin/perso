@@ -1,47 +1,58 @@
 package com.programmingfree.springservice;
 
-import java.net.URI;
-import java.util.logging.Logger;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.catalina.startup.Tomcat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
-import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import com.fastrest.web.FastRestServlet;
 
 @Configuration
-@ComponentScan
+@ComponentScan({ "com.programmingfree.springservice", "com.fastrest" })
 @EnableJpaRepositories
-@Import(RepositoryRestMvcConfiguration.class)
 @EnableAutoConfiguration
 @PropertySource("application.properties")
 public class Application {
-    
-    @Configuration
-    @Import(RepositoryRestMvcConfiguration.class)
-    public static class RestConfiguration extends RepositoryRestMvcConfiguration {
-	
-	private Logger logger = Logger.getLogger(RestConfiguration.class.getName());
-	
-	@Value("${rest.version:}")
-	private String version;
-	
-	@Value("${rest.baseurl:}")
-	private String basePath;
 
-	@Override
-	protected void configureRepositoryRestConfiguration(
-		RepositoryRestConfiguration config) {
-	    super.configureRepositoryRestConfiguration(config);
-	    URI baseUri = URI.create(basePath+"/"+version);
-	    logger.info("Set base uri for rest to : "+baseUri);
-	    config.setBaseUri(baseUri);
-	}
+
+    @Bean
+    public ServletRegistrationBean fastRestServletRegistration() {
+	ServletRegistrationBean registration = new ServletRegistrationBean(
+		new FastRestServlet());
+	Map<String, String> params = new HashMap<String, String>();
+	params.put("com.fastrest.config.file", "fast-rest-config.json");
+	registration.setUrlMappings(Arrays
+		.asList(new String[] { "/fastrest/*" }));
+	registration.setInitParameters(params);
+	registration.setLoadOnStartup(2);
+	return registration;
+    }
+
+
+    
+    @Bean
+    public TomcatEmbeddedServletContainerFactory tomcatFactory() {
+	return new TomcatEmbeddedServletContainerFactory() {
+
+	    @Override
+	    protected TomcatEmbeddedServletContainer getTomcatEmbeddedServletContainer(
+		    Tomcat tomcat) {
+		tomcat.enableNaming();
+		return super.getTomcatEmbeddedServletContainer(tomcat);
+	    }
+	};
     }
 
     public static void main(String[] args) {
