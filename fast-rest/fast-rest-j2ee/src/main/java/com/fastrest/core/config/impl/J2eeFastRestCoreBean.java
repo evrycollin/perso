@@ -8,11 +8,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.fastrest.core.FastCoreService;
 import com.fastrest.core.service.AbstractFastRestService;
 
 @Stateless
 public class J2eeFastRestCoreBean extends AbstractFastRestService implements
-		J2eeFastRestCoreLocal {
+		FastCoreService {
 
 	@PersistenceContext
 	EntityManager entityManager;
