@@ -4,9 +4,8 @@ import com.fastrest.core.FastCoreService;
 
 public interface ServiceLocator {
         
-    FastCoreService getService();
+    FastCoreService getService();   
+    
+    EntityBehavior services = new EntityBehavior();
    
-
-  
-
-}
+ }

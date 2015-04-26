@@ -2,8 +2,24 @@
 	"baseUrl": "/base",
 	"version": 1.1,
 	"cypherIds": true,
-	"serviceLocator": 
-	{
-		"_class": "com.fastrest.core.config.impl.SpringEntityManagerProvider"
+	"serviceLocator": { "_class": "com.fastrest.core.config.impl.SpringEntityManagerProvider" },
+	"entityBehavior": {
+		"Task": {
+			"taskService" : "(.*)", 
+			"taskRepository" : "(find.*)"
+		},
+		"Group" : {
+			"groupRepository" : "(find.*)"
+		},
+		"TaskEventLocation" : {
+			"taskEventLocationRepository" : "(find.*)"
+		},
+		"TaskEvent" : {
+			"taskEventRepository" : "(find.*)"
+		},
+		"User" : {
+			"userRepository" : "(find.*)"
+		}
 	}
+	
 }

@@ -1,44 +1,33 @@
 package com.fastrest.core.config.impl;
 
 import javax.ejb.Stateless;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.fastrest.core.FastRestRequest;
-import com.fastrest.core.model.JpaModel;
 import com.fastrest.core.service.AbstractFastRestService;
+
 @Stateless
-public class J2eeFastRestCoreBean extends AbstractFastRestService implements J2eeFastRestCoreLocal {
-    
-    @PersistenceContext
-    EntityManager entityManager;
+public class J2eeFastRestCoreBean extends AbstractFastRestService implements
+		J2eeFastRestCoreLocal {
 
-    @Override
-    public String doGet(EntityManager entityManager, JpaModel jpaModel,
-            FastRestRequest restReq) {
-        return super.doGet(entityManager, jpaModel, restReq);
-    }
+	@PersistenceContext
+	EntityManager entityManager;
 
-    @Override
-    public String doPost(EntityManager entityManager, JpaModel jpaModel,
-            FastRestRequest restReq) {
-        return super.doPost(entityManager, jpaModel, restReq);
-    }
-    
-    @Override
-    public String doPut(EntityManager entityManager, JpaModel jpaModel,
-            FastRestRequest restReq) {
-        return super.doPut(entityManager, jpaModel, restReq);
-    }
-    
-    @Override
-    public String doDelete(EntityManager entityManager, JpaModel jpaModel,
-            FastRestRequest restReq) {
-        return super.doDelete(entityManager, jpaModel, restReq);
-    }
+	@Inject
+	BeanManager beanManager;
 
-    public EntityManager getEntityManager() {
-	return entityManager;
-    }
-   
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public Object getService(String serviceName) {
+		Bean<?> bean = beanManager.getBeans(serviceName).iterator().next();
+		CreationalContext<?> ctx = beanManager.createCreationalContext(bean);
+		return beanManager.getReference(bean, bean.getClass(), ctx);
+	}
+
 }

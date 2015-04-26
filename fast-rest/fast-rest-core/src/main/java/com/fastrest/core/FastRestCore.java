@@ -8,8 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
-import javax.persistence.EntityManager;
-
 import com.fastrest.core.config.Config;
 import com.fastrest.core.model.Entity;
 import com.fastrest.core.model.JpaModel;
@@ -18,81 +16,80 @@ import com.fastrest.core.util.Json;
 
 public class FastRestCore {
 
-    private Logger logger = Logger.getLogger(FastRestCore.class.getName());
+	private Logger logger = Logger.getLogger(FastRestCore.class.getName());
 
-    public static final FastRestCore Instance = new FastRestCore();
+	public static final FastRestCore Instance = new FastRestCore();
 
-    private Config currentConfig;
-    EntityManager entityManager;
+	private Config currentConfig;
 
-    JpaModel jpaModel;
+	JpaModel jpaModel;
 
-    private FastRestCore() {
+	private FastRestCore() {
 
-    }
-
-    private void loadConfig(Config config) {
-	this.currentConfig = config;
-
-	Cypher.setIdCyphering(config.isCypherIds());
-
-	this.entityManager = currentConfig.getServiceLocator().getService().getEntityManager();
-	
-	// load JpaModel
-	this.jpaModel = new JpaModel(this.entityManager);
-	
-	currentConfig.setJpaModel(jpaModel);
-
-	for (Entity entity : jpaModel.getEntities()) {
-	    Json.GsonBuilder.registerTypeAdapter(entity.getType(),
-		    new Json.EntityObjectAdapter(jpaModel));
 	}
 
-	logger.info("Entity Manager : "
-		+ (this.entityManager != null ? entityManager.toString()
-			: "NULL"));
-	logger.info("Loaded configuration : \n" + currentConfig);
+	private void loadConfig(Config config) {
+		this.currentConfig = config;
 
-    }
+		Cypher.setIdCyphering(config.isCypherIds());
 
-    FastCoreService getService() {
-	return currentConfig.getServiceLocator().getService();
-    }
+		// load JpaModel
+		this.jpaModel = new JpaModel(config);
 
-    public void initializeFromJson(String configJson) {
-	loadConfig(fromJson(configJson, Config.class));
-    }
+		currentConfig.setJpaModel(jpaModel);
 
-    public void initializeFromFile(String file) {
-	loadConfig(fromJson(
-		getClass().getClassLoader().getResourceAsStream(file),
-		Config.class));
-    }
+		for (Entity entity : jpaModel.getEntities()) {
+			Json.GsonBuilder.registerTypeAdapter(entity.getType(),
+					new Json.EntityObjectAdapter(jpaModel));
+		}
 
-    public void initializeFromUrl(String configLocationUrl)
-	    throws MalformedURLException, IOException {
-	loadConfig(fromJson(new URL(configLocationUrl).openStream(),
-		Config.class));
-    }
+		logger.info("Entity Manager : "
+				+ (this.currentConfig.getServiceLocator().getService()
+						.getEntityManager() != null ? this.currentConfig
+						.getServiceLocator().getService().getEntityManager()
+						.toString() : "NULL"));
+		logger.info("Loaded configuration : \n" + currentConfig);
 
-    public String doGet(FastRestRequest restReq) {
-	return getService().doGet(entityManager, jpaModel, restReq);
-    }
+	}
 
-    public String doPut(FastRestRequest restReq) {
-	return getService().doPut(entityManager, jpaModel, restReq);
-    }
+	FastCoreService getService() {
+		return currentConfig.getServiceLocator().getService();
+	}
 
-    public String doPost(FastRestRequest restReq) {
-	return getService().doPost(entityManager, jpaModel, restReq);
-    }
+	public void initializeFromJson(String configJson) {
+		loadConfig(fromJson(configJson, Config.class));
+	}
 
-    public String doDelete(FastRestRequest restReq) {
-	return getService().doDelete(entityManager, jpaModel, restReq);
-    }
+	public void initializeFromFile(String file) {
+		loadConfig(fromJson(
+				getClass().getClassLoader().getResourceAsStream(file),
+				Config.class));
+	}
 
-    public String getConfig() {	
-	return toJson(currentConfig);
-    }
+	public void initializeFromUrl(String configLocationUrl)
+			throws MalformedURLException, IOException {
+		loadConfig(fromJson(new URL(configLocationUrl).openStream(),
+				Config.class));
+	}
+
+	public String doGet(FastRestRequest restReq) {
+		return getService().doGet(currentConfig.getServiceLocator(), jpaModel, restReq);
+	}
+
+	public String doPut(FastRestRequest restReq) {
+		return getService().doPut(currentConfig.getServiceLocator(), jpaModel, restReq);
+	}
+
+	public String doPost(FastRestRequest restReq) {
+		return getService().doPost(currentConfig.getServiceLocator(), jpaModel, restReq);
+	}
+
+	public String doDelete(FastRestRequest restReq) {
+		return getService().doDelete(currentConfig.getServiceLocator(), jpaModel, restReq);
+	}
+
+	public String getConfig() {
+		return toJson(currentConfig);
+	}
 
 }

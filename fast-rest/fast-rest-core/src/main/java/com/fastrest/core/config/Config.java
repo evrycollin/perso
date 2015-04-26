@@ -5,72 +5,77 @@ import com.fastrest.core.util.Json;
 
 public class Config {
 
-    String baseUrl;
+	String baseUrl;
 
-    Double version;
-    
-    boolean cypherIds = false;
+	Double version;
 
-    ServiceLocator serviceLocator;
-    
-    JpaModel jpaModel;
+	boolean cypherIds = false;
 
-    public JpaModel getJpaModel() {
-	return jpaModel;
-    }
-    public void setJpaModel(JpaModel jpaModel) {
-	this.jpaModel = jpaModel;
-    }
-    
+	ServiceLocator serviceLocator;
+	
+	EntityBehavior entityBehavior;
 
-    public boolean isCypherIds() {
-        return cypherIds;
-    }
+	JpaModel jpaModel;
 
-    public void setCypherIds(boolean cypherIds) {
-        this.cypherIds = cypherIds;
-    }
+	public JpaModel getJpaModel() {
+		return jpaModel;
+	}
 
-    public String getBaseUrl() {
-	return baseUrl;
-    }
+	public void setJpaModel(JpaModel jpaModel) {
+		this.jpaModel = jpaModel;
+	}
 
-    public void setBaseUrl(String baseUrl) {
-	this.baseUrl = baseUrl;
-    }
+	public boolean isCypherIds() {
+		return cypherIds;
+	}
 
-    public Double getVersion() {
-	return version;
-    }
+	public void setCypherIds(boolean cypherIds) {
+		this.cypherIds = cypherIds;
+	}
 
-    public void setVersion(Double version) {
-	this.version = version;
-    }
+	public String getBaseUrl() {
+		return baseUrl;
+	}
 
-    public ServiceLocator getServiceLocator() {
-	return serviceLocator;
-    }
-    
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
 
-//    public static void main(String[] args) {
-//
-//	Config config = new Config();
-//	config.setBaseUrl("/base");
-//	config.setVersion(1.1);
-//	config.setEntityManagerProvider(new InjectionEntityManagerProvider());
-//
-//	String json = Json.toJson(config);
-//
-//	System.out.println(json);
-//
-//	Config read = Json.fromJson(json, Config.class);
-//	System.out.println(read);
-//
-//    }
+	public Double getVersion() {
+		return version;
+	}
 
-    @Override
-    public String toString() {
-	return Json.toJson(this);
-    }
+	public void setVersion(Double version) {
+		this.version = version;
+	}
+
+	public EntityBehavior getEntityBehavior() {
+		return entityBehavior;
+	}
+
+	public ServiceLocator getServiceLocator() {
+		return serviceLocator;
+	}
+
+	// public static void main(String[] args) {
+	//
+	// Config config = new Config();
+	// config.setBaseUrl("/base");
+	// config.setVersion(1.1);
+	// config.setEntityManagerProvider(new InjectionEntityManagerProvider());
+	//
+	// String json = Json.toJson(config);
+	//
+	// System.out.println(json);
+	//
+	// Config read = Json.fromJson(json, Config.class);
+	// System.out.println(read);
+	//
+	// }
+
+	@Override
+	public String toString() {
+		return Json.toJson(this);
+	}
 
 }

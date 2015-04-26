@@ -2,21 +2,20 @@ package com.fastrest.core.util;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.fastrest.core.FastRestRequest;
 import com.fastrest.core.config.ServiceLocator;
-import com.fastrest.core.model.CollectionAttribute;
 import com.fastrest.core.model.Entity;
 import com.fastrest.core.model.EntityAttribute;
 import com.fastrest.core.model.EntityInstance;
 import com.fastrest.core.model.Field;
-import com.fastrest.core.model.IdAttribute;
 import com.fastrest.core.model.JpaModel;
 import com.fastrest.core.model.NavigableAttribute;
 import com.fastrest.core.model.SimpleAttribute;
-import com.fastrest.web.FastRestServlet;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -107,7 +106,7 @@ public class Json {
 		    if (value != null && value instanceof Number) {
 			jo.add(f.getName(), new JsonPrimitive((Number) value));
 		    } else if (value != null) {
-			jo.add(f.getName(), new JsonPrimitive(value.toString()));
+			jo.add(f.getName(), context.serialize(value));
 		    }
 		} else if (f instanceof NavigableAttribute) {
 		    JsonObject link = new JsonObject();
@@ -267,7 +266,26 @@ public class Json {
 
 	public JsonElement serialize(Class<?> src, Type typeOfSrc,
 		JsonSerializationContext context) {
-	    return context.serialize(src.getName());
+		
+		if( src.isArray() ) {
+			return context.serialize("["+src.getComponentType().getName()+"]");
+		} else if( Collection.class.isAssignableFrom( src )) {
+			String type = Object.class.toString();
+			if( typeOfSrc instanceof ParameterizedType ) {
+				ParameterizedType pt = (ParameterizedType) typeOfSrc;
+				for (Type t : pt.getActualTypeArguments()) {
+	                type = t.toString();
+	                break;
+	            }
+			}
+			return context.serialize(src.getName()+"[" +type+"]");
+			
+		}
+		else {
+			return context.serialize(src.getName());
+		    			
+		}
+		
 	}
 
     }

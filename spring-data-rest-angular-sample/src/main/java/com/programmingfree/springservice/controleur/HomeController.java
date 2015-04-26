@@ -15,9 +15,9 @@ import com.programmingfree.springservice.domain.User;
 @Controller
 public class HomeController {
 
-    @RequestMapping("/home")
+    @RequestMapping("/")
     public String home() {
-	return "index";
+	return "test";
     }
 
     @RequestMapping("/test")
