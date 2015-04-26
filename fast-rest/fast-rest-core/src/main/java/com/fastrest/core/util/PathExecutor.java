@@ -3,12 +3,12 @@ package com.fastrest.core.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fastrest.core.model.CollectionAttribute;
+import com.fastrest.core.model.CollectionField;
 import com.fastrest.core.model.Entity;
 import com.fastrest.core.model.EntityInstance;
 import com.fastrest.core.model.Field;
 import com.fastrest.core.model.JpaModel;
-import com.fastrest.core.model.NavigableAttribute;
+import com.fastrest.core.model.NavigableField;
 
 public class PathExecutor {
 
@@ -38,7 +38,7 @@ public class PathExecutor {
 			List<String> tokens) {
 
 		String link = tokens.remove(0);
-		NavigableAttribute nav = (NavigableAttribute) parentInstance
+		NavigableField nav = (NavigableField) parentInstance
 				.getEntity().getFields().get(link);
 		if (tokens.size() == 0) {
 			parentInstance.setLink(link);
@@ -48,7 +48,7 @@ public class PathExecutor {
 		Entity targetEntity = jpaModel.getEntityByType(nav.getTargetType());
 
 		EntityInstance entityInstance = new EntityInstance(targetEntity, null);
-		if (nav instanceof CollectionAttribute) {
+		if (nav instanceof CollectionField) {
 			String idStr = Cypher.unmaskId(targetEntity.getType()
 					.getSimpleName(), tokens.remove(0));
 

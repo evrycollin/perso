@@ -6,10 +6,8 @@
 		<artifactId>fast-rest-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.fast-rest</groupId>
 	<artifactId>fast-rest-j2ee</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>fast-rest-j2ee</name>
 
 	<dependencies>
@@ -25,7 +23,6 @@
 			<artifactId>ejb-api</artifactId>
 			<version>3.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>

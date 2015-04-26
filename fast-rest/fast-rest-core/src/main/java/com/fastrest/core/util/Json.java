@@ -10,12 +10,12 @@ import java.util.logging.Logger;
 import com.fastrest.core.FastRestRequest;
 import com.fastrest.core.config.ServiceLocator;
 import com.fastrest.core.model.Entity;
-import com.fastrest.core.model.EntityAttribute;
+import com.fastrest.core.model.EntityField;
 import com.fastrest.core.model.EntityInstance;
 import com.fastrest.core.model.Field;
 import com.fastrest.core.model.JpaModel;
-import com.fastrest.core.model.NavigableAttribute;
-import com.fastrest.core.model.SimpleAttribute;
+import com.fastrest.core.model.NavigableField;
+import com.fastrest.core.model.SimpleField;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -101,14 +101,14 @@ public class Json {
 
 			for (Field f : entity.getFields().values()) {
 
-				if (f instanceof SimpleAttribute) {
+				if (f instanceof SimpleField) {
 					Object value = f.get(src);
 					if (value != null && value instanceof Number) {
 						jo.add(f.getName(), new JsonPrimitive((Number) value));
 					} else if (value != null) {
 						jo.add(f.getName(), context.serialize(value));
 					}
-				} else if (f instanceof NavigableAttribute) {
+				} else if (f instanceof NavigableField) {
 					JsonObject link = new JsonObject();
 					String url = threadLocal.get().getAppPath() + "/"
 							+ threadLocal.get().getReqUri();
@@ -121,7 +121,7 @@ public class Json {
 					}
 					url += "/" + f.getName();
 					link.add("_link", new JsonPrimitive(url));
-					if (f instanceof EntityAttribute) {
+					if (f instanceof EntityField) {
 						Object fieldEntity = f.get(src);
 						if (fieldEntity != null) {
 							Entity fieldEntityModel = jpaModel
@@ -176,8 +176,8 @@ public class Json {
 					entity = entityInst.getEntity().getType().newInstance();
 				}
 				for (Field field : entityInst.getEntity().getFields().values()) {
-					if (field instanceof SimpleAttribute) {
-						SimpleAttribute sa = (SimpleAttribute) field;
+					if (field instanceof SimpleField) {
+						SimpleField sa = (SimpleField) field;
 						JsonElement elmt = jsonObject.get(field.getName());
 						if (elmt != null) {
 							if (sa.getType().equals(Integer.class)
@@ -202,14 +202,14 @@ public class Json {
 							}
 						}
 
-					} else if (field instanceof EntityAttribute) {
-						EntityAttribute ea = (EntityAttribute) field;
+					} else if (field instanceof EntityField) {
+						EntityField ea = (EntityField) field;
 						JsonObject link = jsonObject.getAsJsonObject(field
 								.getName());
 						if (link != null) {
 							Entity targetEntity = jpaModel.getEntityByType(ea
 									.getTargetType());
-							SimpleAttribute targetIdField = (SimpleAttribute) targetEntity
+							SimpleField targetIdField = (SimpleField) targetEntity
 									.getId();
 
 							if (link.get(targetIdField.getName()) != null) {

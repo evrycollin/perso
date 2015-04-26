@@ -37,7 +37,7 @@ public class Entity {
 		for (Attribute<?, ?> att : entityType.getDeclaredAttributes()) {
 			if (att instanceof PluralAttribute<?, ?, ?>) {
 				PluralAttribute<?, ?, ?> pa = (PluralAttribute<?, ?, ?>) att;
-				fields.put(att.getName(), new CollectionAttribute(this, pa));
+				fields.put(att.getName(), new CollectionField(this, pa));
 
 			} else if (att instanceof SingularAttribute<?, ?>) {
 				SingularAttribute<?, ?> sa = ((SingularAttribute<?, ?>) att);
@@ -47,15 +47,15 @@ public class Entity {
 					try {
 						if (em.getEntityManagerFactory().getMetamodel()
 								.managedType(sa.getJavaType()) != null) {
-							fields.put(att.getName(), new EntityAttribute(this,
+							fields.put(att.getName(), new EntityField(this,
 									sa));
 						} else {
-							fields.put(att.getName(), new SimpleAttribute(this,
+							fields.put(att.getName(), new SimpleField(this,
 									sa));
 						}
 
 					} catch (Throwable th) {
-						fields.put(att.getName(), new SimpleAttribute(this, sa));
+						fields.put(att.getName(), new SimpleField(this, sa));
 					}
 
 				}
@@ -133,7 +133,7 @@ public class Entity {
 	}
 
 	public Object getIdFromString(String idStr) {
-		Class<?> type = ((SimpleAttribute) getId()).getType();
+		Class<?> type = ((SimpleField) getId()).getType();
 		if (Integer.class.equals(type) || "int".equals(type.getName())) {
 			return new Integer(idStr);
 		} else if (Long.class.equals(type) || "long".equals(type.getName())) {

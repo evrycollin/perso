@@ -7,12 +7,12 @@ import javax.persistence.EntityManager;
 import com.fastrest.core.FastCoreService;
 import com.fastrest.core.FastRestRequest;
 import com.fastrest.core.config.ServiceLocator;
-import com.fastrest.core.model.CollectionAttribute;
+import com.fastrest.core.model.CollectionField;
 import com.fastrest.core.model.Entity;
-import com.fastrest.core.model.EntityAttribute;
+import com.fastrest.core.model.EntityField;
 import com.fastrest.core.model.EntityInstance;
 import com.fastrest.core.model.JpaModel;
-import com.fastrest.core.model.NavigableAttribute;
+import com.fastrest.core.model.NavigableField;
 import com.fastrest.core.util.Json;
 import com.fastrest.core.util.PathExecutor;
 
@@ -69,19 +69,19 @@ public abstract class AbstractFastRestService implements FastCoreService {
 				entityManager.persist(toCreate);
 				entityManager.flush();
 				return toJson(toCreate);
-			} else if (targetObject instanceof NavigableAttribute) {
+			} else if (targetObject instanceof NavigableField) {
 				EntityInstance instance = pe.getInstance();
 				Object entity = getById(serviceLocator, instance);
 				restReq.setTargetEntity(entity);
-				NavigableAttribute nav = (NavigableAttribute) targetObject;
+				NavigableField nav = (NavigableField) targetObject;
 				restReq.setEntityInstance(new EntityInstance(jpaModel
 						.getEntityByType(nav.getTargetType()), null));
 				Object toCreate = restReq.getContent(nav.getTargetType());
 				entityManager.persist(toCreate);
-				if (nav instanceof EntityAttribute) {
+				if (nav instanceof EntityField) {
 					// TODO : maj relations
 
-				} else if (nav instanceof CollectionAttribute) {
+				} else if (nav instanceof CollectionField) {
 					// TODO : maj relations
 				}
 				entityManager.flush();

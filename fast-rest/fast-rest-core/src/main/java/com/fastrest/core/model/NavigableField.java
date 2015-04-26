@@ -1,11 +1,11 @@
 package com.fastrest.core.model;
 
-public abstract class NavigableAttribute extends Field {
+public abstract class NavigableField extends Field {
 
 	private Class<?> targetType;
 	private boolean isMultiple;
 
-	public NavigableAttribute(Entity entity, String name, Class<?> targetType,
+	public NavigableField(Entity entity, String name, Class<?> targetType,
 			boolean isMultiple) {
 		super(entity, name);
 		this.targetType = targetType;

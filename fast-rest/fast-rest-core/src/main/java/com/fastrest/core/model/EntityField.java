@@ -2,9 +2,9 @@ package com.fastrest.core.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-public class EntityAttribute extends NavigableAttribute {
+public class EntityField extends NavigableField {
 
-	public EntityAttribute(Entity entity, SingularAttribute<?, ?> sa) {
+	public EntityField(Entity entity, SingularAttribute<?, ?> sa) {
 		super(entity, sa.getName(), sa.getJavaType(), false);
 	}
 

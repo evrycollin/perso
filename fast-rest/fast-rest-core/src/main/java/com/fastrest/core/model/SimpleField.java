@@ -2,11 +2,11 @@ package com.fastrest.core.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-public class SimpleAttribute extends Field {
+public class SimpleField extends Field {
 
 	private Class<?> type;
 
-	public SimpleAttribute(Entity entity, SingularAttribute<?, ?> sa) {
+	public SimpleField(Entity entity, SingularAttribute<?, ?> sa) {
 		super(entity, sa.getName());
 		this.type = sa.getJavaType();
 	}
