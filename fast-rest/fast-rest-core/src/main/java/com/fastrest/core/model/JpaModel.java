@@ -22,7 +22,7 @@ public class JpaModel {
 
 	public JpaModel(Config config) {
 		this.serviceLocator = config.getServiceLocator();
-		
+
 		if (serviceLocator.getService() == null
 				|| serviceLocator.getService().getEntityManager() == null)
 			return;

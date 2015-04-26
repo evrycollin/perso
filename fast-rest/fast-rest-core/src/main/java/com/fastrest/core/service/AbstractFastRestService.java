@@ -22,12 +22,10 @@ public abstract class AbstractFastRestService implements FastCoreService {
 			FastRestRequest restReq) {
 
 		PathExecutor pe = new PathExecutor(jpaModel, restReq.getPath());
-		EntityInstance instance = pe.getInstance();
-		Object entity = getById(serviceLocator, instance);
 
 		Json.EntityObjectAdapter.threadLocal.set(restReq);
 		try {
-			return toJson(pe.navigate(entity));
+			return toJson(pe.navigate());
 		} finally {
 			Json.EntityObjectAdapter.threadLocal.set(null);
 		}

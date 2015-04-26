@@ -12,7 +12,7 @@ public class Config {
 	boolean cypherIds = false;
 
 	ServiceLocator serviceLocator;
-	
+
 	EntityBehavior entityBehavior;
 
 	JpaModel jpaModel;

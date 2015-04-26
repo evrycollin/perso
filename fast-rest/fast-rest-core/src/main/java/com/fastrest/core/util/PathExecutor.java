@@ -60,7 +60,9 @@ public class PathExecutor {
 				: entityInstance;
 	}
 
-	public Object navigate(Object entity) {
+	public Object navigate() {
+		EntityInstance entity = getInstance();
+
 		EntityInstance entityInstance = getInstance();
 		if (entityInstance.getLink() != null) {
 			Field field = entityInstance.getEntity().getFields()

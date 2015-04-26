@@ -28,8 +28,8 @@ public class Entity {
 	private Class<?> type;
 	private Field id;
 
-	public Entity(Config config, ServiceLocator serviceLocator, JpaModel jpaModel,
-			EntityType<?> entityType) {
+	public Entity(Config config, ServiceLocator serviceLocator,
+			JpaModel jpaModel, EntityType<?> entityType) {
 		this.jpaModel = jpaModel;
 		this.type = entityType.getJavaType();
 		this.name = entityType.getName();
@@ -67,18 +67,20 @@ public class Entity {
 				fields.remove(id.getName());
 		}
 
-		
 		// load services
-		if( config.getEntityBehavior().containsKey(name)) {
-			for( String serviceName : config.getEntityBehavior().get(name).keySet()) {
-				
-				String methodFilter = config.getEntityBehavior().get(name).get(serviceName);
-				
-				services.add( new Service( serviceLocator, this, serviceName, methodFilter) );
-				
+		if (config.getEntityBehavior().containsKey(name)) {
+			for (String serviceName : config.getEntityBehavior().get(name)
+					.keySet()) {
+
+				String methodFilter = config.getEntityBehavior().get(name)
+						.get(serviceName);
+
+				services.add(new Service(serviceLocator, this, serviceName,
+						methodFilter));
+
 			}
 		}
-		
+
 	}
 
 	public JpaModel getJpaModel() {

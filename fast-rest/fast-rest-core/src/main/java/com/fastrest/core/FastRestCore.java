@@ -73,19 +73,23 @@ public class FastRestCore {
 	}
 
 	public String doGet(FastRestRequest restReq) {
-		return getService().doGet(currentConfig.getServiceLocator(), jpaModel, restReq);
+		return getService().doGet(currentConfig.getServiceLocator(), jpaModel,
+				restReq);
 	}
 
 	public String doPut(FastRestRequest restReq) {
-		return getService().doPut(currentConfig.getServiceLocator(), jpaModel, restReq);
+		return getService().doPut(currentConfig.getServiceLocator(), jpaModel,
+				restReq);
 	}
 
 	public String doPost(FastRestRequest restReq) {
-		return getService().doPost(currentConfig.getServiceLocator(), jpaModel, restReq);
+		return getService().doPost(currentConfig.getServiceLocator(), jpaModel,
+				restReq);
 	}
 
 	public String doDelete(FastRestRequest restReq) {
-		return getService().doDelete(currentConfig.getServiceLocator(), jpaModel, restReq);
+		return getService().doDelete(currentConfig.getServiceLocator(),
+				jpaModel, restReq);
 	}
 
 	public String getConfig() {
