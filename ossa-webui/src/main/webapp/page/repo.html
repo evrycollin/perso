@@ -1,5 +1,100 @@
-<div class="row clearfix jumbotron" >
-	<h1>
-		{{title}}
-	</h1>
-</div>
+<div class="panel panel-default">
+	<div class="panel-heading" > 
+		<div class="row"> 
+			<div class="col-md-8">
+				<input type="text" ng-model="repoFilter" placeholder="filter" />
+			</div>
+			<div class="col-md-4">
+				<button title="Reload" class="button pull-right" ng-click="reload()" ><span class="glyphicon glyphicon-refresh" /></button>
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<table class="table">
+		<thead>
+			<tr>
+				<th>Package</th>
+				<th>File</th>
+				<th></th>
+				<th>Size</th>
+				<th>Last Update</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="entry in repo | filter: repoFilter" ng-class="{active: edited==entry }">
+				<td>{{entry.package}}</td>
+				<td>{{entry.name}}</td>
+				<td>
+					<button title="Edit" class="button" ng-click="edit(entry)" ><span class="glyphicon glyphicon-file" /></button>
+				</td>
+				<td>
+					{{entry.content.length}} bytes
+				</td>
+				<td>	
+					{{entry.lastUpdate}}
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td>
+					<button title="New" class="button" ng-click="add()" ><span class="glyphicon glyphicon-plus" /></button>
+				</td>
+				<td></td>
+				<td></td>
+				<td>{{totalRepoSize}} bytes</td>
+				<td></td>
+			</tr>
+		</tfoot>
+		</table>	
+	</div>				
+</div>				
+
+
+<div class="panel panel-default" ng-show="edited">
+	<div class="panel-heading" > 
+		<div class="row"> 
+			<div class="col-md-8">
+				<button title="Save" class="button" ng-click="save()" ><span class="glyphicon glyphicon-save" /></button>
+			</div>
+			<div class="col-md-4">
+				<button title="Close" class="button pull-right" ng-click="edit()" ><span class="glyphicon glyphicon-remove" /></button>
+			</div>
+		</div>
+	</div>
+	<div class="panel-body">
+		<textarea rows="12" style="width: 100%; padding:10px;">{{edited.content}}</textarea>
+	</div>				
+</div>				
+
+<div class="panel panel-default" ng-show="created">
+	<form name="createEntryForm" ng-submit="saveNew()">
+		<div class="panel-heading" > 
+			<div class="row"> 
+				<div class="col-md-8">
+					<button title="Save" type="submit" class="button"><span class="glyphicon glyphicon-save" /></button>
+				</div>
+				<div class="col-md-4">
+					<button title="Close" class="button pull-right" ng-click="reload()" ><span class="glyphicon glyphicon-remove" /></button>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+				<div class="form-group">
+					<label for="package">Package :</label>
+					<select id="package" class="form-control"  ng-model="created.package">
+						<option />
+						<option  ng-repeat="package in packages" value="{{package}}">{{package}}</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="name">File Name :</label>
+					<input id="name" type="text" class="form-control"  ng-model="created.name" />
+				</div>
+				<div class="form-group">
+					<label for="content">Content :</label>
+					<textarea id="content" class="form-control" rows="8" style="width: 100%; padding:10px;" ng-model="created.content">{{created.content}}</textarea>
+				</div>
+		</div>				
+	</form>
+</div>				

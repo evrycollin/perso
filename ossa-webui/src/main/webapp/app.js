@@ -13,7 +13,7 @@ myApp.controller(
 		'$scope', 
 		'$http',
 		function ($scope, $http) {
-			$scope.title="Home";
+			$scope.title="OSSA Fundation";
 			
 			
 		}
@@ -38,7 +38,60 @@ myApp.controller(
 		'$scope', 
 		'$http',
 		function ($scope, $http) {
-			$scope.title="Respository";
+			$scope.title="Respository";		
+
+			
+			$scope.reload = function() {
+				$scope.edited = null;
+				$scope.created = null;
+				$scope.repo = null;
+				$http.get('repo/packages.json').success(
+					function(data, status, headers, config) {
+						$scope.packages = data;
+					}
+				);
+
+				$http.get('repo/export-all.json').success(
+					function(data, status, headers, config) {
+						$scope.repo = data;
+						$scope.totalRepoSize=0;
+						for( e in $scope.repo ) {
+							$scope.totalRepoSize += $scope.repo[e].content.length;
+						}
+					}
+				);
+			};
+			
+			$scope.add = function() {
+				$scope.created = {};
+			
+			};
+			
+			$scope.saveNew = function() {
+				$scope.repo.push( $scope.created );
+				$scope.totalRepoSize+=$scope.created.content.length;
+				$scope.created = null;	
+			};
+			
+			
+			$scope.edit = function(entry) {			
+				$scope.edited = entry;
+			};
+
+			$scope.save = function() {				
+				// post to server
+				$http.post('/repo/save', $scope.edited )
+				.success(function(data, status, headers, config) {
+					$scope.edited = null;
+				})
+				.error(function(data, status, headers, config) {
+					console.log("error" + status );
+				});			
+				
+			};
+			
+			
+			$scope.reload();
 		}
 	]
 );

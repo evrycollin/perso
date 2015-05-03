@@ -1,0 +1,26 @@
+[
+	{
+		"package" : "OSSA_BATCH",
+		"name" : "Batch-01",
+		"content" : "{ \n\"batchXml\": \"importNlva.xml\",\n\"schedule\": \"*/1\"\n}",
+		"lastUpdate" : "2015-05-03 11:22:56"
+	},
+	{
+		"package": "OSSA_BATCH_XML",
+		"name": "importNlva.xml",
+		"content": "<?xml version=\"1.0\">\n<batch ....",
+		"lastUpdate" : "2015-05-03 11:22:56"
+	},
+	{
+		"package": "OSSA_BATCH_CONFIG",
+		"name": "importNlva.config",
+		"content": "#some properties ...",
+		"lastUpdate" : "2015-05-03 11:22:56"
+	},
+	{
+		"package": "OSSA_BATCH_CONFIG",
+		"name" : "batch-common.config",
+		"content": "datasource.ossa=jdbc/ds-ossa\ndatasource.fas=jdbc/ds-fas\ndatasource.nlv=jdbc/ds-nlv",
+		"lastUpdate" : "2015-05-03 11:22:56"
+	}
+]
