@@ -13,28 +13,29 @@ import com.fastrest.core.config.ServiceLocator;
 
 public class JpaModel {
 
-	private List<Entity> entities = new ArrayList<Entity>();
+	private Map<String, List<Entity>> model = new HashMap<String, List<Entity>>();
 
 	transient private Map<String, Entity> byName = new HashMap<String, Entity>();
 	transient private Map<Class<?>, Entity> byType = new HashMap<Class<?>, Entity>();
 	transient private ServiceLocator serviceLocator;
-	transient private EntityManager entityManager;
 
 	public JpaModel(Config config) {
 		this.serviceLocator = config.getServiceLocator();
 
-		if (serviceLocator.getService() == null
-				|| serviceLocator.getService().getEntityManager() == null)
+		if (serviceLocator.getService() == null )
 			return;
+		
+		for( String unit : serviceLocator.getService().getUnits() ) {
 
-		this.entityManager = serviceLocator.getService().getEntityManager();
-
-		for (EntityType<?> entityType : entityManager.getEntityManagerFactory()
-				.getMetamodel().getEntities()) {
-			Entity entity = new Entity(config, serviceLocator, this, entityType);
-			entities.add(entity);
-			byName.put(entity.getName(), entity);
-			byType.put(entity.getType(), entity);
+			EntityManager entityManager = serviceLocator.getService().getEntityManager(unit);
+			model.put(unit, new ArrayList<Entity>());
+			for (EntityType<?> entityType : entityManager.getEntityManagerFactory()
+					.getMetamodel().getEntities()) {
+				Entity entity = new Entity(entityManager, unit, config, serviceLocator, this, entityType);
+				model.get(unit).add(entity);
+				byName.put(unit+"."+entity.getName(), entity);
+				byType.put(entity.getType(), entity);
+			}
 		}
 
 	}
@@ -47,16 +48,12 @@ public class JpaModel {
 		return byType.get(entityType);
 	}
 
-	public List<Entity> getEntities() {
-		return entities;
+	public Map<String, List<Entity>> getModel() {
+		return model;
 	}
 
-	public void setEntities(List<Entity> entities) {
-		this.entities = entities;
-	}
-
-	public EntityManager getEntityManager() {
-		return entityManager;
+	public void setEntities(Map<String, List<Entity>> entities) {
+		this.model = entities;
 	}
 
 	public ServiceLocator getServiceLocator() {
@@ -66,8 +63,10 @@ public class JpaModel {
 	@Override
 	public String toString() {
 		String res = "JpaModel [entities=\n";
-		for (Entity entity : entities) {
-			res += "- " + entity + "\n";
+		for( String unit : model.keySet() ) {
+			for (Entity entity : model.get(unit)) {
+				res += "- " + entity + "\n";
+			}
 		}
 		res += "]";
 		return res;

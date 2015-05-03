@@ -38,16 +38,13 @@ public class FastRestCore {
 
 		currentConfig.setJpaModel(jpaModel);
 
-		for (Entity entity : jpaModel.getEntities()) {
-			Json.GsonBuilder.registerTypeAdapter(entity.getType(),
-					new Json.EntityObjectAdapter(jpaModel));
+		for( String unit : jpaModel.getModel().keySet() ) {
+			for (Entity entity : jpaModel.getModel().get(unit)) {
+				Json.GsonBuilder.registerTypeAdapter(entity.getType(),
+						new Json.EntityObjectAdapter(jpaModel));
+			}
 		}
-
-		logger.info("Entity Manager : "
-				+ (this.currentConfig.getServiceLocator().getService()
-						.getEntityManager() != null ? this.currentConfig
-						.getServiceLocator().getService().getEntityManager()
-						.toString() : "NULL"));
+		
 		logger.info("Loaded configuration : \n" + currentConfig);
 
 	}

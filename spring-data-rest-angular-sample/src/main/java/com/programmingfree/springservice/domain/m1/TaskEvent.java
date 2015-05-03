@@ -1,4 +1,4 @@
-package com.programmingfree.springservice.domain;
+package com.programmingfree.springservice.domain.m1;
 
 import java.util.Set;
 

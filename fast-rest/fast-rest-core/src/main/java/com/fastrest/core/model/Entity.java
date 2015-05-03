@@ -21,19 +21,23 @@ public class Entity {
 			.getLogger(JpaModel.class.getName());
 
 	transient private JpaModel jpaModel;
+	transient private EntityManager entityManager;
 
 	private String name;
+	private String unit;
 	private Map<String, Field> fields = new HashMap<String, Field>();
 	private List<Service> services = new ArrayList<Service>();
 	private Class<?> type;
 	private Field id;
 
-	public Entity(Config config, ServiceLocator serviceLocator,
-			JpaModel jpaModel, EntityType<?> entityType) {
+	public Entity(EntityManager entityManager, String unit, Config config,
+			ServiceLocator serviceLocator, JpaModel jpaModel,
+			EntityType<?> entityType) {
+		this.entityManager = entityManager;
+		this.unit = unit;
 		this.jpaModel = jpaModel;
 		this.type = entityType.getJavaType();
 		this.name = entityType.getName();
-		EntityManager em = serviceLocator.getService().getEntityManager();
 		for (Attribute<?, ?> att : entityType.getDeclaredAttributes()) {
 			if (att instanceof PluralAttribute<?, ?, ?>) {
 				PluralAttribute<?, ?, ?> pa = (PluralAttribute<?, ?, ?>) att;
@@ -45,13 +49,11 @@ public class Entity {
 					fields.put(att.getName(), id = new IdAttribute(this, sa));
 				} else {
 					try {
-						if (em.getEntityManagerFactory().getMetamodel()
-								.managedType(sa.getJavaType()) != null) {
-							fields.put(att.getName(), new EntityField(this,
-									sa));
+						if (entityManager.getEntityManagerFactory()
+								.getMetamodel().managedType(sa.getJavaType()) != null) {
+							fields.put(att.getName(), new EntityField(this, sa));
 						} else {
-							fields.put(att.getName(), new SimpleField(this,
-									sa));
+							fields.put(att.getName(), new SimpleField(this, sa));
 						}
 
 					} catch (Throwable th) {
@@ -69,17 +71,24 @@ public class Entity {
 
 		// load services
 		if (config.getEntityBehavior().containsKey(name)) {
-			for (String serviceName : config.getEntityBehavior().get(name)
-					.keySet()) {
-
-				String methodFilter = config.getEntityBehavior().get(name)
-						.get(serviceName);
-
-				services.add(new Service(serviceLocator, this, serviceName,
-						methodFilter));
-
-			}
 		}
+		
+		// load services
+		if (config.getEntityBehavior().containsKey(unit)) {
+			if (config.getEntityBehavior().get(unit).containsKey(name)) {
+				for (String serviceName : config.getEntityBehavior().get(unit).get(name)
+						.keySet()) {
+
+					String methodFilter = config.getEntityBehavior().get(unit).get(name)
+							.get(serviceName);
+
+					services.add(new Service(serviceLocator, this, serviceName,
+							methodFilter));
+
+				}
+			}
+
+		}		
 
 	}
 
@@ -121,6 +130,14 @@ public class Entity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public String getUnit() {
+		return unit;
 	}
 
 	@Override

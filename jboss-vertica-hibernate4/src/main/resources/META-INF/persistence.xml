@@ -14,13 +14,14 @@
 	xsi:schemaLocation="
         http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="primary">
-		<!-- If you are running in a production environment, add a managed data 
-			source, this example data source is just for devleopment and testing! -->
-		<!-- The datasource is deployed as WEB-INF/hibernate4-quickstart-ds.xml, 
-			you can find it in the source at src/main/webapp/WEB-INF/hibernate4-quickstart-ds.xml -->
-		<!-- <jta-data-source>java:jboss/datasources/Hibernate4QuickstartDS</jta-data-source> -->
+	<persistence-unit name="unit1">
 		<jta-data-source>java:jboss/vertica-ds</jta-data-source>
+		<class>com.programmingfree.springservice.domain.m1.Address</class>
+		<class>com.programmingfree.springservice.domain.m1.Group</class>
+		<class>com.programmingfree.springservice.domain.m1.Task</class>
+		<class>com.programmingfree.springservice.domain.m1.TaskEvent</class>
+		<class>com.programmingfree.springservice.domain.m1.TaskEventLocation</class>
+		<class>com.programmingfree.springservice.domain.m1.User</class>
 		<properties>
 			<!-- Properties for Hibernate -->
 			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
@@ -31,4 +32,20 @@
 			<property name="show_sql" value="true"/>
 		</properties>
 	</persistence-unit>
+
+	<persistence-unit name="unit1">
+		<jta-data-source>java:jboss/vertica-ds</jta-data-source>
+		<class>com.programmingfree.springservice.domain.m2.Test</class>
+		<properties>
+			<!-- Properties for Hibernate -->
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.dialect"
+				value="org.jboss.as.quickstart.hibernate4.util.vertica.VerticaDialect7" />
+			<property name="hibernate.generate_statistics" value="true" />
+			<property name="show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+
+
 </persistence>

@@ -2,6 +2,8 @@ package com.fastrest.core.service;
 
 import static com.fastrest.core.util.Json.toJson;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 
 import com.fastrest.core.FastCoreService;
@@ -32,23 +34,18 @@ public abstract class AbstractFastRestService implements FastCoreService {
 	}
 
 	public Object getById(ServiceLocator serviceLocator, EntityInstance instance) {
-		EntityManager entityManager = serviceLocator.getService()
-				.getEntityManager();
-
-		return entityManager.find(instance.getEntity().getType(),
+		return instance.getEntity().getEntityManager().find(instance.getEntity().getType(),
 				instance.getInstanceId());
 	}
 
 	public String doDelete(ServiceLocator serviceLocator, JpaModel jpaModel,
 			FastRestRequest restReq) {
-		EntityManager entityManager = serviceLocator.getService()
-				.getEntityManager();
 
 		EntityInstance instance = new PathExecutor(jpaModel, restReq.getPath())
 				.getInstance();
 		Object entity = getById(serviceLocator, instance);
-		entityManager.remove(entity);
-		entityManager.flush();
+		instance.getEntity().getEntityManager().remove(entity);
+		instance.getEntity().getEntityManager().flush();
 		return Boolean.TRUE.toString();
 	}
 
@@ -56,9 +53,6 @@ public abstract class AbstractFastRestService implements FastCoreService {
 			FastRestRequest restReq) {
 		Json.EntityObjectAdapter.threadLocal.set(restReq);
 		try {
-			EntityManager entityManager = serviceLocator.getService()
-					.getEntityManager();
-
 			PathExecutor pe = new PathExecutor(jpaModel, restReq.getPath());
 			Object targetObject = pe.getTarget();
 			if (targetObject instanceof Entity) {
@@ -66,8 +60,8 @@ public abstract class AbstractFastRestService implements FastCoreService {
 				restReq.setEntityInstance(new EntityInstance(entity, null));
 
 				Object toCreate = restReq.getContent(entity.getType());
-				entityManager.persist(toCreate);
-				entityManager.flush();
+				entity.getEntityManager().persist(toCreate);
+				entity.getEntityManager().flush();
 				return toJson(toCreate);
 			} else if (targetObject instanceof NavigableField) {
 				EntityInstance instance = pe.getInstance();
@@ -77,14 +71,14 @@ public abstract class AbstractFastRestService implements FastCoreService {
 				restReq.setEntityInstance(new EntityInstance(jpaModel
 						.getEntityByType(nav.getTargetType()), null));
 				Object toCreate = restReq.getContent(nav.getTargetType());
-				entityManager.persist(toCreate);
+				instance.getEntity().getEntityManager().persist(toCreate);
 				if (nav instanceof EntityField) {
 					// TODO : maj relations
 
 				} else if (nav instanceof CollectionField) {
 					// TODO : maj relations
 				}
-				entityManager.flush();
+				instance.getEntity().getEntityManager().flush();
 				return toJson(toCreate);
 			}
 		} finally {
@@ -95,9 +89,6 @@ public abstract class AbstractFastRestService implements FastCoreService {
 
 	public String doPut(ServiceLocator serviceLocator, JpaModel jpaModel,
 			FastRestRequest restReq) {
-
-		EntityManager entityManager = serviceLocator.getService()
-				.getEntityManager();
 
 		EntityInstance instance = new PathExecutor(jpaModel, restReq.getPath())
 				.getInstance();
@@ -110,8 +101,8 @@ public abstract class AbstractFastRestService implements FastCoreService {
 
 			Object toUpdate = restReq
 					.getContent(instance.getEntity().getType());
-			entityManager.merge(toUpdate);
-			entityManager.flush();
+			instance.getEntity().getEntityManager().merge(toUpdate);
+			instance.getEntity().getEntityManager().flush();
 
 			return toJson(toUpdate);
 		} finally {
@@ -119,5 +110,10 @@ public abstract class AbstractFastRestService implements FastCoreService {
 		}
 
 	}
-
+	
+	abstract public EntityManager getEntityManager(String unit);
+	
+	abstract public Object getService(String serviceName);
+	
+	abstract public Set<String> getUnits();
 }

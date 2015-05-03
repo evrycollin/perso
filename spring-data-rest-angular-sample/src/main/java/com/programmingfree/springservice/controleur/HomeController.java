@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fastrest.core.util.Cypher;
-import com.programmingfree.springservice.domain.User;
+import com.programmingfree.springservice.domain.m1.User;
 
 @Controller
 public class HomeController {

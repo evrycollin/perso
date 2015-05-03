@@ -55,7 +55,7 @@ public class Json {
 				JsonDeserializationContext context) throws JsonParseException {
 
 			JsonObject jsonObject = json.getAsJsonObject();
-			JsonPrimitive prim = (JsonPrimitive) jsonObject.remove("_class");
+			JsonPrimitive prim = (JsonPrimitive) jsonObject.remove("_");
 			String className = prim.getAsString();
 			Class<?> klass = null;
 			try {
@@ -71,7 +71,7 @@ public class Json {
 		public JsonElement serialize(Object src, Type typeOfSrc,
 				JsonSerializationContext context) {
 			JsonObject res = (JsonObject) context.serialize(src);
-			res.addProperty("_class", src.getClass().getName());
+			res.addProperty("_", src.getClass().getName());
 
 			return res;
 		}
@@ -230,7 +230,7 @@ public class Json {
 									targetIdValue = targetId;
 								}
 								if (targetIdValue != null) {
-									Object targetEntityObj = jpaModel
+									Object targetEntityObj = targetEntity
 											.getEntityManager().find(
 													targetEntity.getType(),
 													targetIdValue);

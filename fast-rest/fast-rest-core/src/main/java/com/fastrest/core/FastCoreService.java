@@ -1,5 +1,7 @@
 package com.fastrest.core;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 
 import com.fastrest.core.config.ServiceLocator;
@@ -19,7 +21,9 @@ public interface FastCoreService {
 	String doDelete(ServiceLocator serviceLocator, JpaModel jpaModel,
 			FastRestRequest restReq);
 
-	EntityManager getEntityManager();
+	EntityManager getEntityManager( String unit );
+	
+	Set<String> getUnits();
 
 	Object getService(String serviceName);
 

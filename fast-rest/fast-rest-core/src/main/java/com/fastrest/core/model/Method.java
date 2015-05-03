@@ -10,6 +10,9 @@ public class Method {
 	private Class<?> returnType;
 	private Class<?>[] parameters;
 	private int entityParameterIdx = -1;
+	private boolean get=false;
+	private boolean putOrPost=false;
+	
 
 	transient private Service service;
 	transient private Object serviceInstance;
@@ -31,10 +34,13 @@ public class Method {
 				if (EntityParam.class
 						.equals(annotations[i][j].annotationType())) {
 					entityParameterIdx = i;
+					putOrPost = true;					
 				}
 			}
 		}
-
+		if( !putOrPost ) {
+			get=true;
+		}
 	}
 
 	@Override
@@ -72,5 +78,13 @@ public class Method {
 
 	public java.lang.reflect.Method getMethod() {
 		return method;
+	}
+	
+	public boolean isGet() {
+		return get;
+	}
+	
+	public boolean isPutOrPost() {
+		return putOrPost;
 	}
 }

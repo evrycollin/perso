@@ -1,25 +1,52 @@
 {
-	"baseUrl": "/base",
-	"version": 1.1,
+	"version": 1.0,
 	"cypherIds": true,
-	"serviceLocator": { "_class": "com.fastrest.core.config.impl.SpringEntityManagerProvider" },
-	"entityBehavior": {
-		"Task": {
-			"taskService" : "(.*)", 
-			"taskRepository" : "(find.*)"
+	"enableSecurity": true,
+	"serviceLocator": {
+		"_": "com.fastrest.core.config.impl.MyAppServiceLocator"
+	},
+	"model": {
+		"_": {
+			"administrator": {
+				"_": [ "ROLE_ADMIN" ],
+				"manager": {
+					"_": [ "ROLE_SUPERUSER" ],
+					"user": {
+						"_": [ "ROLE_USER" ]
+					}
+				}
+			}
 		},
-		"Group" : {
-			"groupRepository" : "(find.*)"
-		},
-		"TaskEventLocation" : {
-			"taskEventLocationRepository" : "(find.*)"
-		},
-		"TaskEvent" : {
-			"taskEventRepository" : "(find.*)"
-		},
-		"User" : {
-			"userRepository" : "(find.*)"
+		"unit1": {
+			"_": {
+				"CRUD": [ "user" ]
+			},
+			"Task": {
+				"taskService": {
+					"getTaskServiceMethode": {
+						"_": [ "manager" ],
+						"type": "R"
+					}
+				}
+			},
+			"TaskEventLocation": {
+				"_": {
+					"CD": [ "manager" ]
+				}
+			},
+			"Group": {
+				"_": {
+					"CUD": [ "administrator" ]
+				},
+				"groupService": {
+					"addUser": {
+						"_": "C"
+					},
+					"removeUser": {
+						"_": "D"
+					}
+				}
+			}
 		}
 	}
-	
 }

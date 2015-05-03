@@ -24,7 +24,13 @@ public class PathExecutor {
 
 		List<String> tokens = new ArrayList<String>(path);
 
-		Entity rootEntity = jpaModel.getEntityByName(tokens.remove(0));
+		String entityName = tokens.remove(0);
+		Entity rootEntity = jpaModel
+				.getEntityByName((entityName.indexOf('.') > 0 ? "" : "default.")
+						+ entityName);
+		if (rootEntity == null) {
+			throw new RuntimeException("entity not found : " + entityName);
+		}
 		String idStr = Cypher.unmaskId(rootEntity.getType().getSimpleName(),
 				tokens.remove(0));
 		Object instanceId = rootEntity.getIdFromString(idStr);
@@ -38,8 +44,8 @@ public class PathExecutor {
 			List<String> tokens) {
 
 		String link = tokens.remove(0);
-		NavigableField nav = (NavigableField) parentInstance
-				.getEntity().getFields().get(link);
+		NavigableField nav = (NavigableField) parentInstance.getEntity()
+				.getFields().get(link);
 		if (tokens.size() == 0) {
 			parentInstance.setLink(link);
 			return parentInstance;

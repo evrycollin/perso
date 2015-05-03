@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.programmingfree.springservice.domain.Task;
+import com.programmingfree.springservice.domain.m1.Task;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 

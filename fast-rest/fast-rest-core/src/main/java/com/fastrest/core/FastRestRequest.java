@@ -33,6 +33,9 @@ public class FastRestRequest {
 	Map<String, List<String>> reqParams;
 	Map<String, List<String>> headParams;
 
+	public void $() {
+		
+	}
 	public FastRestRequest(HttpServletRequest request) throws IOException {
 
 		contextPath = request.getContextPath() + request.getServletPath();
