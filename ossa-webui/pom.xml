@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ 
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.hp.ossa</groupId>
+  <artifactId>ossa-webui</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>OSSA Web-UI</name>
+ 
+  <properties>
+  </properties>
+ 
+  <dependencies>
+
+  </dependencies>
+ 
+  <build>
+    <plugins>
+		<plugin>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>maven-jetty-plugin</artifactId>
+			<version>6.1.10</version>
+			<configuration>
+			  <scanIntervalSeconds>10</scanIntervalSeconds>
+			  <connectors>
+				<connector implementation="org.mortbay.jetty.bio.SocketConnector">
+				  <port>8080</port>
+				  <maxIdleTime>60000</maxIdleTime>
+				</connector>
+			  </connectors>
+			</configuration>
+		</plugin>
+	  </plugins>
+  </build>
+</project>
