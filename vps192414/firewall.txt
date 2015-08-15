@@ -1,0 +1,57 @@
+http://guide.ovh.com/firewall
+
+List :
+
+/sbin/iptables -L
+
+On authorise les ports 22 et 80 :
+$ /sbin/iptables -A INPUT -i eth0 -p tcp --dport 22 -j ACCEPT
+$ /sbin/iptables -A INPUT -i eth0 -p tcp --dport 80 -j ACCEPT
+
+
+On voit que la politique par défaut est de tout accepter => Chain INPUT (policy ACCEPT). Nous voulons bloquer tout le trafic qu'on n'aura pas au préalable autorisé. On va donc ajouter une règle qui va bloquer les autres ports. Mais il se pose alors un problème : lorsqu'une connexion va être faite depuis notre serveur vers le serveur kernel.org pour télécharger le nouveau noyau (ce n'est qu'un exemple), il va établir une connexion vers le site et va attendre sa réponse. La demande de connexion va bien partir mais comment va-t-elle revenir étant donné qu'on a tout bloqué ? Heureusement, iptables est puissant et peux aussi trier les paquets par rapport à leur état. On va donc ajouter une règle :
+$ /sbin/iptables -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+Il ne reste plus qu'à bloquer le reste (attention, c'est là ou le firewall va vraiment faire effet, verifiez donc d'avoir bien rentré vos règles sinon vous allez bloquer votre serveur !) :
+$ /sbin/iptables -A INPUT -i eth0 -j DROP
+
+Pour mettre à zéro votre firewall, tapez :
+$ /sbin/iptables -F INPUT
+
+
+
+--------------------------
+http://www.tejasbarot.com/2014/08/02/rhel-7-centos-7-disable-firewalld-and-use-iptables/#axzz3irhL0u00
+
+Read more: RHEL 7 / CentOS 7 : Disable Firewalld and use iptables @ All Linux User's Blog http://www.tejasbarot.com/2014/08/02/rhel-7-centos-7-disable-firewalld-and-use-iptables/#ixzz3irhbiy91 
+Under Creative Commons License: Attribution Non-Commercial No Derivatives 
+Follow us: @imtejasbarot on Twitter | AllLinuxUsersBlog on Facebook
+
+RHEL 7 / CentOS 7 : Disable Firewalld and use iptables
+
+
+Read more: RHEL 7 / CentOS 7 : Disable Firewalld and use iptables @ All Linux User's Blog http://www.tejasbarot.com/2014/08/02/rhel-7-centos-7-disable-firewalld-and-use-iptables/#ixzz3irhhHMwk 
+Under Creative Commons License: Attribution Non-Commercial No Derivatives 
+Follow us: @imtejasbarot on Twitter | AllLinuxUsersBlog on Facebook
+
+1. Disable Firewalld Service.
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl mask firewalld
+2. Stop Firewalld Service.
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl stop firewalld
+3. Install iptables service related packages.
+
+[root@rhel-centos7-tejas-barot-linux ~]# yum -y install iptables-services
+4. Make sure service starts at boot:
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl enable iptables
+# If you do not want ip6tables, You can skip following command.
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl enable ip6tables
+5. Now, Finally Let’s start the iptables services.
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl start iptables
+# If you do not want ip6tables, You can skip following command.
+
+[root@rhel-centos7-tejas-barot-linux ~]# systemctl start ip6tables
